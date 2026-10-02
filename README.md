@@ -1,1 +1,0 @@
-Version autonome : remplacer uniquement index.html dans GitHub Pages. Les six photos fournies sont intégrées dans le HTML. Carlos Alcaraz est conservé pour Le Jeune Pro.
