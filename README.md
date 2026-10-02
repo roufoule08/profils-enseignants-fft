@@ -1,1 +1,0 @@
-Version reconstruite de zéro. Remplacer uniquement index.html dans GitHub Pages. Les six images sont intégrées directement au fichier.
