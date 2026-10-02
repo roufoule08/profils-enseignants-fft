@@ -1,0 +1,1 @@
+Déposer index.html, referentiel-profils-v2.json, CREDITS-IMAGES.md et le dossier assets à la racine du dépôt GitHub Pages. Ne pas renommer les fichiers.
