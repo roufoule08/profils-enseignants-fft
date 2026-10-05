@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Colloque des Enseignants</title>
+  <meta name="description" content="Quel profil tennis êtes-vous ? Un questionnaire ludique pour les enseignants de tennis.">
+  <meta name="theme-color" content="#003c2e">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Roboto+Flex:wght@400;600;700&display=swap">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <link rel="preload" as="image" href="assets/img/profils/passeur.jpg">
+</head>
+<body>
+  <a class="skip-link" href="#app">Aller au contenu</a>
+
+  <header class="top">
+    <div class="brand">FFT · PROFILS</div>
+    <nav class="nav" aria-label="Navigation principale">
+      <button type="button" data-nav="home">Accueil</button>
+      <button type="button" data-nav="quiz">Questionnaire</button>
+      <button type="button" data-nav="result">Portrait</button>
+      <button type="button" data-nav="room">Salle</button>
+    </nav>
+  </header>
+
+  <main id="app" tabindex="-1">
+    <noscript><p style="padding:24px">Ce site nécessite JavaScript pour fonctionner.</p></noscript>
+  </main>
+
+  <footer class="footer">
+    Outil ludique d’animation, pas un test psychométrique ni une évaluation professionnelle.
+  </footer>
+
+  <!-- L'ordre compte : données, puis outils, puis pages, puis l'application. -->
+  <script src="assets/js/data/profiles.js" defer></script>
+  <script src="assets/js/data/questions.js" defer></script>
+  <script src="assets/js/data/axes.js" defer></script>
+  <script src="assets/js/ui/html.js" defer></script>
+  <script src="assets/js/core/scoring.js" defer></script>
+  <script src="assets/js/core/storage.js" defer></script>
+  <script src="assets/js/core/router.js" defer></script>
+  <script src="assets/js/ui/views/home.js" defer></script>
+  <script src="assets/js/ui/views/quiz.js" defer></script>
+  <script src="assets/js/ui/views/result.js" defer></script>
+  <script src="assets/js/ui/views/room.js" defer></script>
+  <script src="assets/js/app.js" defer></script>
+</body>
+</html>
