@@ -109,7 +109,7 @@
       id: 'devise',
       text: 'Votre devise ?',
       answers: [
-        { label: 'Chaque enfant progresse naturellement', points: { passeur: 1 } },
+        { label: 'Chaque enfant progresse à son rythme', points: { passeur: 1 } },
         { label: 'Le terrain ne ment pas', points: { coach: 1 } },
         { label: 'Seul on va vite, ensemble on va loin', points: { batisseur: 1 } },
         { label: 'Des élèves satisfaits reviennent toujours', points: { entrepreneur: 1 } },

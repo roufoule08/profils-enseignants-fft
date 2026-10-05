@@ -276,6 +276,11 @@ img { max-width: 100%; }
 .ball::before { left: -58%; }
 .ball::after { right: -58%; }
 
+/* Écran « Vous êtes… » : boutons à leur taille naturelle */
+.answers-single { flex: none; }
+
+.quiz-note { font-size: 12px; color: var(--color-muted); margin: 12px 0 0; }
+
 .qnav {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -449,7 +454,7 @@ img { max-width: 100%; }
 
 .row {
   display: grid;
-  grid-template-columns: 105px 1fr 42px;
+  grid-template-columns: minmax(120px, 38%) 1fr 42px;
   gap: 7px;
   align-items: center;
   margin: 11px 0;
@@ -504,6 +509,7 @@ img { max-width: 100%; }
   .quiz, .mag, .room { max-width: 1050px; margin: auto; }
   .quiz { min-height: auto; padding: 42px; }
   .answers { grid-template-columns: 1fr 1fr; }
+  .answers-single { grid-template-columns: 1fr; max-width: 520px; flex: none; }
 
   .cover {
     display: grid;

@@ -2,8 +2,9 @@
 
 Questionnaire ludique pour les enseignantes et enseignants de tennis, conçu pour l'atelier
 « L'IA au service des enseignants ». 10 questions, un portrait
-parmi six profils (Le Passeur, Le Coach de compétition, Le Bâtisseur,
-L'Entrepreneur, Le Jeune Pro, Le Sage) et une vue « La salle » qui montre la
+parmi six profils (Le Passeur · La Passeuse, Le ou la Coach de compétition,
+Le Bâtisseur · La Bâtisseuse, L'Entrepreneur · L'Entrepreneuse, Le ou la Jeune Pro,
+Le ou la Sage) et une vue « La salle » qui montre la
 répartition anonyme des profils.
 
 Le portrait propose 3 pistes concrètes où l'IA peut faciliter le travail, sans jamais
@@ -46,6 +47,7 @@ tests/
 
 | Je veux…                               | Fichier à modifier             |
 |----------------------------------------|--------------------------------|
+| Changer un nom de profil (féminin, masculin, double) | `assets/js/data/profiles.js` (champ `names`) |
 | Changer un texte de profil, une piste IA ou un chiffre | `assets/js/data/profiles.js` |
 | Changer une question ou une réponse    | `assets/js/data/questions.js`  |
 | Changer les points d'une réponse       | `assets/js/data/questions.js` (champ `points`) |

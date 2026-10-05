@@ -10,13 +10,14 @@
   var navButtons = document.querySelectorAll('[data-nav]');
   var store = App.storage.roomStore;
 
-  function emptyAnswers() {
-    return App.data.questions.map(function () { return null; });
+  /** gender : choix fait avant la question 1 ('f', 'm', 'n'), null tant qu'il n'est pas fait. */
+  function newQuiz() {
+    return { gender: null, index: 0, answers: App.data.questions.map(function () { return null; }) };
   }
 
   var state = {
     route: 'home',
-    quiz: { index: 0, answers: emptyAnswers() },
+    quiz: newQuiz(),
     result: App.storage.loadResult(),
     room: { status: 'idle', entries: [] }
   };
@@ -82,11 +83,13 @@
   /* ---------- Questionnaire ---------- */
 
   function resetQuiz() {
-    state.quiz = { index: 0, answers: emptyAnswers() };
+    state.quiz = newQuiz();
   }
 
   function finishQuiz() {
-    var record = App.storage.createRecord(App.scoring.computeResult(state.quiz.answers));
+    var computed = App.scoring.computeResult(state.quiz.answers);
+    computed.gender = state.quiz.gender;
+    var record = App.storage.createRecord(computed);
     state.result = record;
     App.storage.saveResult(record);
     store.add(record).catch(function (err) {
@@ -125,6 +128,12 @@
   var actions = {
     go: function (el) { go(el.dataset.route); },
 
+    gender: function (el) {
+      if (App.data.GENDERS.indexOf(el.dataset.value) < 0) return;
+      state.quiz.gender = el.dataset.value;
+      render({ focus: 'page' });
+    },
+
     answer: function (el) {
       var index = Number(el.dataset.index);
       state.quiz.answers[state.quiz.index] = index;
@@ -132,8 +141,9 @@
     },
 
     prev: function () {
-      if (state.quiz.index === 0) return;
-      state.quiz.index--;
+      // Depuis la question 1, on revient à l'écran « Vous êtes… ».
+      if (state.quiz.index === 0) state.quiz.gender = null;
+      else state.quiz.index--;
       render({ focus: 'page' });
     },
 

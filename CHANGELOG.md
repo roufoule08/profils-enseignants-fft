@@ -1,5 +1,19 @@
 # Journal des modifications
 
+## Mise à jour 3 : portrait au féminin ou au masculin
+
+- Nouvel écran « Vous êtes… » avant la question 1, avec trois choix :
+  une enseignante, un enseignant, ou je préfère ne pas préciser.
+- Le portrait s'affiche au bon genre : La Passeuse, La Bâtisseuse, L'Entrepreneuse…
+  Avec « ne pas préciser », les deux formes sont affichées.
+- L'accueil et « La salle » montrent toujours les deux formes, par exemple
+  « Le Passeur · La Passeuse » ou « Le ou la Sage ».
+- Ce choix n'est gardé que sur l'appareil, pour réafficher le portrait.
+  Il n'est jamais enregistré dans « La salle ».
+- Le bouton « Rejouer le point d'avant » ramène de la question 1 à l'écran « Vous êtes… ».
+- La devise du Passeur devient « Chaque enfant progresse à son rythme ».
+- 4 tests ont été ajoutés, pour un total de 29.
+
 ## Mise à jour 2 : textes, questions et portrait
 
 Les points de chaque réponse sont inchangés : le calcul du profil reste identique,

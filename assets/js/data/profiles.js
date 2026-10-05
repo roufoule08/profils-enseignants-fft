@@ -9,6 +9,7 @@
  * un remplacement du savoir-faire de l'enseignant ou de l'enseignante.
  *
  * Champs :
+ *   names     : nom du profil au masculin (m), au féminin (f) et sous les deux formes (both)
  *   strengths : 3 points forts
  *   pistes    : 3 pistes concrètes où l'IA facilite le travail { title, text }
  *   prompt    : consigne prête à copier pour un premier essai
@@ -26,7 +27,7 @@
   App.data.profiles = Object.freeze([
     {
       id: 'passeur',
-      name: 'Le Passeur',
+      names: { m: 'Le Passeur', f: 'La Passeuse', both: 'Le Passeur · La Passeuse' },
       player: 'Yannick Noah',
       image: 'assets/img/profils/passeur.jpg',
       quote: 'Ma fierté, c’est de les voir progresser.',
@@ -56,7 +57,7 @@
     },
     {
       id: 'coach',
-      name: 'Le Coach de compétition',
+      names: { m: 'Le Coach de compétition', f: 'La Coach de compétition', both: 'Le ou la Coach de compétition' },
       player: 'Novak Djokovic',
       image: 'assets/img/profils/coach.jpg',
       quote: 'Sur le court, c’est le résultat qui parle.',
@@ -85,7 +86,7 @@
     },
     {
       id: 'batisseur',
-      name: 'Le Bâtisseur',
+      names: { m: 'Le Bâtisseur', f: 'La Bâtisseuse', both: 'Le Bâtisseur · La Bâtisseuse' },
       player: 'Amélie Mauresmo',
       image: 'assets/img/profils/batisseur.jpg',
       quote: 'Je fais tourner le club.',
@@ -114,7 +115,7 @@
     },
     {
       id: 'entrepreneur',
-      name: 'L’Entrepreneur',
+      names: { m: 'L’Entrepreneur', f: 'L’Entrepreneuse', both: 'L’Entrepreneur · L’Entrepreneuse' },
       player: 'Serena Williams',
       image: 'assets/img/profils/entrepreneur.jpg',
       quote: 'Chaque créneau compte.',
@@ -144,7 +145,7 @@
     },
     {
       id: 'jeune-pro',
-      name: 'Le Jeune Pro',
+      names: { m: 'Le Jeune Pro', f: 'La Jeune Pro', both: 'Le ou la Jeune Pro' },
       player: 'Carlos Alcaraz',
       image: 'assets/img/profils/jeune-pro.jpg',
       quote: 'J’apprends tous les jours.',
@@ -173,7 +174,7 @@
     },
     {
       id: 'sage',
-      name: 'Le Sage',
+      names: { m: 'Le Sage', f: 'La Sage', both: 'Le ou la Sage' },
       player: 'Roger Federer',
       image: 'assets/img/profils/sage.jpg',
       quote: 'Montrez-moi que ça marche.',
@@ -205,5 +206,18 @@
   /** Retourne le profil correspondant à `id`, ou `undefined`. */
   App.data.getProfile = function (id) {
     return App.data.profiles.find(function (p) { return p.id === id; });
+  };
+
+  /** Valeurs possibles du choix fait avant le questionnaire. */
+  App.data.GENDERS = Object.freeze(['f', 'm', 'n']);
+
+  /**
+   * Nom du profil accordé : 'f' = féminin, 'm' = masculin,
+   * autre valeur (dont 'n', « ne pas préciser ») = les deux formes.
+   */
+  App.data.profileName = function (profile, gender) {
+    if (gender === 'f') return profile.names.f;
+    if (gender === 'm') return profile.names.m;
+    return profile.names.both;
   };
 })(window.App = window.App || {});

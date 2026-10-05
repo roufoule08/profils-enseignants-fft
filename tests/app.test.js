@@ -46,9 +46,9 @@
     App.data.profiles.forEach(function (p) {
       App.data.axes.forEach(function (axis) {
         var v = p.axes[axis.key];
-        assert(typeof v === 'number' && v >= -1 && v <= 1, p.name + ' : axe ' + axis.key + ' invalide');
+        assert(typeof v === 'number' && v >= -1 && v <= 1, p.id + ' : axe ' + axis.key + ' invalide');
       });
-      assert(/^assets\/img\/profils\/.+\.jpg$/.test(p.image), p.name + ' : image manquante');
+      assert(/^assets\/img\/profils\/.+\.jpg$/.test(p.image), p.id + ' : image manquante');
     });
   });
 
@@ -61,15 +61,15 @@
 
   test('Contenu : chaque profil a 3 points forts, 3 pistes IA, un prompt et des chiffres sourcés', function () {
     App.data.profiles.forEach(function (p) {
-      assertEqual(p.strengths.length, 3, p.name + ' : points forts');
-      assertEqual(p.pistes.length, 3, p.name + ' : pistes');
+      assertEqual(p.strengths.length, 3, p.id + ' : points forts');
+      assertEqual(p.pistes.length, 3, p.id + ' : pistes');
       p.pistes.forEach(function (piste) {
-        assert(piste.title && piste.text, p.name + ' : piste incomplète');
+        assert(piste.title && piste.text, p.id + ' : piste incomplète');
       });
-      assert(p.prompt && p.prompt.length > 20, p.name + ' : prompt');
-      assert(p.stats.length >= 1, p.name + ' : chiffres');
+      assert(p.prompt && p.prompt.length > 20, p.id + ' : prompt');
+      assert(p.stats.length >= 1, p.id + ' : chiffres');
       p.stats.forEach(function (st) {
-        assert(st.label && st.source, p.name + ' : chaque chiffre doit avoir un texte et une source');
+        assert(st.label && st.source, p.id + ' : chaque chiffre doit avoir un texte et une source');
       });
     });
   });
@@ -208,9 +208,11 @@
     });
   });
 
-  test('Stockage : la salle ne conserve que des données anonymes', function () {
+  test('Stockage : la salle ne conserve que des données anonymes (jamais le choix « Vous êtes… »)', function () {
     return withCleanStorage(function () {
-      var record = App.storage.createRecord(App.scoring.computeResult(questions.map(function () { return 2; })));
+      var computed = App.scoring.computeResult(questions.map(function () { return 2; }));
+      computed.gender = 'f';
+      var record = App.storage.createRecord(computed);
       return App.storage.roomStore.add(record)
         .then(function () { return App.storage.roomStore.list(); })
         .then(function (rows) {
@@ -229,14 +231,14 @@
   });
 
   test('Affichage : le questionnaire s’adapte au nombre de questions', function () {
-    var out = App.views.quiz({ index: questions.length - 1, answers: questions.map(function () { return 0; }) }).toString();
+    var out = App.views.quiz({ gender: 'n', index: questions.length - 1, answers: questions.map(function () { return 0; }) }).toString();
     assert(out.indexOf('Question ' + questions.length + '/' + questions.length) >= 0, 'Compteur de questions');
     assert(out.indexOf('Voir mon portrait') >= 0, 'Dernière question');
     assert(out.indexOf('100 %') >= 0, 'Progression à 100 %');
   });
 
   test('Affichage : boutons du questionnaire « Servir le prochain point » et « Rejouer le point d’avant »', function () {
-    var out = App.views.quiz({ index: 1, answers: questions.map(function () { return 0; }) }).toString();
+    var out = App.views.quiz({ gender: 'n', index: 1, answers: questions.map(function () { return 0; }) }).toString();
     assert(out.indexOf('Servir le prochain point') >= 0, 'Bouton suivant');
     assert(out.indexOf('Rejouer le point d’avant') >= 0, 'Bouton précédent');
   });
@@ -256,7 +258,7 @@
     var record = App.storage.createRecord(App.scoring.computeResult(questions.map(function () { return 0; })));
     var pages = [
       App.views.home(),
-      App.views.quiz({ index: 0, answers: questions.map(function () { return null; }) }),
+      App.views.quiz({ gender: 'n', index: 0, answers: questions.map(function () { return null; }) }),
       App.views.result(record),
       App.views.room({ status: 'ready', entries: [record] }, { isShared: false })
     ];
@@ -269,6 +271,41 @@
     var imgs = App.views.home().toString().match(/<img[^>]*>/g) || [];
     assertEqual(imgs.length, App.data.profiles.length);
     imgs.forEach(function (tag) { assert(/alt="[^"]+"/.test(tag), 'alt manquant : ' + tag); });
+  });
+
+  /* ---------- Choix « Vous êtes… » ---------- */
+
+  test('Accord : nom du profil au féminin, au masculin ou sous les deux formes', function () {
+    var p = App.data.getProfile('passeur');
+    assertEqual(App.data.profileName(p, 'f'), 'La Passeuse');
+    assertEqual(App.data.profileName(p, 'm'), 'Le Passeur');
+    assertEqual(App.data.profileName(p, 'n'), 'Le Passeur · La Passeuse');
+    assertEqual(App.data.profileName(p, undefined), 'Le Passeur · La Passeuse', 'Ancien portrait sans choix');
+    App.data.profiles.forEach(function (pr) {
+      assert(pr.names.m && pr.names.f && pr.names.both, pr.id + ' : noms incomplets');
+    });
+  });
+
+  test('Accord : le questionnaire commence par l’écran « Vous êtes… »', function () {
+    var out = App.views.quiz({ gender: null, index: 0, answers: questions.map(function () { return null; }) }).toString();
+    assertEqual((out.match(/data-action="gender"/g) || []).length, 3);
+    assert(out.indexOf('Question 1/') < 0, 'La question 1 ne doit pas encore s’afficher');
+    var q1 = App.views.quiz({ gender: 'f', index: 0, answers: questions.map(function () { return null; }) }).toString();
+    assert(q1.indexOf('Question 1/' + questions.length) >= 0, 'Question 1 après le choix');
+  });
+
+  test('Accord : le portrait s’affiche au féminin pour une enseignante', function () {
+    var computed = App.scoring.computeResult(questions.map(function () { return 0; }));
+    computed.gender = 'f';
+    var out = App.views.result(App.storage.createRecord(computed)).toString();
+    assert(out.indexOf('La Passeuse') >= 0, 'Nom au féminin');
+    assert(out.indexOf('Le Passeur') < 0, 'Pas de nom au masculin');
+  });
+
+  test('Accord : un choix enregistré invalide est refusé', function () {
+    var computed = App.scoring.computeResult(questions.map(function () { return 0; }));
+    computed.gender = 'x';
+    assert(!App.storage._internal.isValidResult(App.storage.createRecord(computed)));
   });
 
   /* ---------- Navigation ---------- */

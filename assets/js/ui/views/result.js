@@ -66,16 +66,18 @@
     if (!p || !s) return emptyState();
 
     var ia = App.data.iaLevels[result.iaLevel];
+    var name = App.data.profileName(p, result.gender);
+    var secondaryName = App.data.profileName(s, result.gender);
     var interpretation = App.scoring.interpretAxes(result.axes);
 
     return html`
       <section class="page">
         <article class="mag">
           <div class="cover">
-            <img class="cover-img" src="${p.image}" alt="Illustration du profil ${p.name}">
+            <img class="cover-img" src="${p.image}" alt="Illustration du profil ${name}">
             <div class="cover-copy">
               <div class="kicker">Votre portrait</div>
-              <h1 tabindex="-1">${p.name}</h1>
+              <h1 tabindex="-1">${name}</h1>
               <p class="deck">« ${p.quote} »</p>
               <span class="tag">${result.code} · IA : ${ia.name}</span>
               <p>${p.intro}</p>
@@ -84,7 +86,7 @@
           <div class="article">
             <div class="summary">
               <b>En bref</b>
-              <p>Profil principal : <strong>${p.name}</strong>. Profil secondaire : <strong>${s.name}</strong>. Votre manière d’enseigner est unique : ce portrait en éclaire les grandes tendances.</p>
+              <p>Profil principal : <strong>${name}</strong>. Profil secondaire : <strong>${secondaryName}</strong>. Votre manière d’enseigner est unique : ce portrait en éclaire les grandes tendances.</p>
             </div>
 
             ${App.data.axes.map(function (axis) { return axisBar(axis, result.axes[axis.key]); })}
