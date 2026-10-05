@@ -2,7 +2,8 @@
  * Contenu de la page « Sources et méthode ».
  * Source : documentation de reprise (« Sources et données exploitées »,
  * « Règles de calcul », « Limites connues du modèle »), plus les décisions
- * de DECISIONS.md pour la question 10 et le niveau IA (D-07, D-08).
+ * de DECISIONS.md pour la question 10 et le niveau IA (D-07, D-08), et le référentiel v3
+ * (« regles.indicateurs ») pour les indicateurs.
  */
 (function (App) {
   'use strict';
@@ -30,7 +31,7 @@
       'Vous répondez à 10 questions, une réponse par question : 8 sur le métier, puis 2 sur l’usage de l’IA.',
       'Chaque réponse donne des points à un ou deux profils. La question sur l’ancienneté compte double pour le Jeune Pro et le Sage, car leur identité tient à la place dans la carrière.',
       'Le profil qui obtient le plus de points est votre profil principal, le suivant votre profil secondaire. En cas d’égalité, la réponse à la question « Votre principal atout dans le métier ? » départage.',
-      'Les 3 dimensions (Terrain/Club, Repères/Exploration, Groupe/Individuel) sont la moyenne des positions des profils, pondérée par vos points.',
+      'Vos 3 indicateurs viennent directement de vos réponses. La part de la gestion et l’envie d’essayer additionnent les points de certaines réponses, rapportés à un maximum (12 et 9), en pourcentage. Le temps encore à gagner croise la part de la gestion avec votre niveau IA.',
       'Votre niveau IA correspond à votre fréquence d’usage de l’IA (question 9).',
       'Aucune donnée personnelle n’entre dans le calcul. Seul le résultat est gardé, dans votre navigateur.'
     ],
@@ -39,7 +40,7 @@
       'C’est un outil d’animation ludique, appuyé sur des études : ce n’est ni un test psychométrique validé ni une évaluation professionnelle.',
       'Les points de chaque réponse ont été fixés à dire d’expert : ils n’ont pas encore été ajustés sur de vraies réponses.',
       'La question sur l’ancienneté fait ressortir plus facilement le Jeune Pro et le Sage.',
-      'Les pourcentages des dimensions sont indicatifs : ce sont des tendances, pas des mesures.',
+      'Les pourcentages des indicateurs sont indicatifs : ce sont des tendances, pas des mesures.',
       'L’enquête chiffrée principale est régionale (Nouvelle-Aquitaine) : sa représentativité nationale n’est pas démontrée.',
       'Les profils ont été pensés pour les enseignants diplômés : les bénévoles peuvent moins s’y reconnaître.'
     ]

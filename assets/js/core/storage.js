@@ -7,8 +7,8 @@
  * `roomStore` expose une interface asynchrone ({ list, add }) pour pouvoir
  * être remplacé par une base de données partagée sans toucher au reste du site.
  *
- * Aucune donnée personnelle n'est enregistrée. Le champ gender d'une version
- * précédente (choix « Vous êtes… », retiré) est effacé à la première lecture.
+ * Aucune donnée personnelle n'est enregistrée. La salle ne garde que le résultat
+ * calculé et l'horodatage (référentiel, « regles.enregistrement_vue_salle »).
  *
  * Toutes les données lues sont validées : une donnée corrompue ou obsolète
  * est ignorée au lieu de faire planter la page.
@@ -16,17 +16,16 @@
 (function (App) {
   'use strict';
 
-  var SCHEMA_VERSION = 1;
+  var SCHEMA_VERSION = 2;
   var KEYS = {
-    result: 'fft-profils:v1:result',
-    room: 'fft-profils:v1:room'
+    result: 'fft-profils:v2:result',
+    room: 'fft-profils:v2:room'
   };
-  // Clés de la première version du site, reprises une seule fois.
-  var LEGACY_KEYS = { result: 'fft-mobile-r', room: 'fft-mobile-room' };
-  var LEGACY_PROFILE_IDS = {
-    P: 'passeur', C: 'coach', B: 'batisseur', E: 'entrepreneur', J: 'jeune-pro', S: 'sage'
-  };
+  // Clés des versions précédentes (axes v2, choix du genre, première version).
+  // Ces résultats ne peuvent pas être convertis en indicateurs v3 : ils sont effacés.
+  var OBSOLETE_KEYS = ['fft-mobile-r', 'fft-mobile-room', 'fft-profils:v1:result', 'fft-profils:v1:room'];
   var MAX_ROOM_ENTRIES = 5000;
+  var INDICATOR_KEYS = ['gestion', 'essai', 'gain'];
 
   /* ---------- Accès sûr à localStorage ---------- */
 
@@ -64,52 +63,23 @@
 
   function hasValidCore(r) {
     return !!r && typeof r === 'object' &&
+      typeof r.id === 'string' &&
       isKnownProfile(r.profile) &&
       isKnownProfile(r.secondary) &&
-      !!r.axes && App.data.axes.every(function (a) { return isPercent(r.axes[a.key]); }) &&
+      !!r.indicators && INDICATOR_KEYS.every(function (k) { return isPercent(r.indicators[k]); }) &&
       Number.isInteger(r.iaLevel) && r.iaLevel >= 0 && r.iaLevel < App.data.iaLevels.length;
   }
 
-  function isValidResult(r) {
-    return hasValidCore(r) && typeof r.id === 'string' && typeof r.code === 'string';
-  }
+  var isValidResult = hasValidCore;
+  var isValidRoomEntry = hasValidCore;
 
-  function isValidRoomEntry(e) {
-    return hasValidCore(e) && typeof e.id === 'string';
-  }
-
-  /* ---------- Reprise des données de l'ancienne version ---------- */
-
-  function fromLegacy(old) {
-    if (!old || typeof old !== 'object') return null;
-    return {
-      version: SCHEMA_VERSION,
-      id: createId(),
-      createdAt: null,
-      profile: LEGACY_PROFILE_IDS[old.profile],
-      secondary: LEGACY_PROFILE_IDS[old.second],
-      axes: { terrainClub: old.t, reperesExploration: old.x, groupeIndividuel: old.g },
-      code: typeof old.code === 'string' ? old.code : '',
-      iaLevel: old.ia
-    };
-  }
-
-  function migrateLegacyData() {
-    var oldResult = readJson(LEGACY_KEYS.result);
-    if (oldResult && readJson(KEYS.result) == null) {
-      var r = fromLegacy(oldResult);
-      if (r && r.code && isValidResult(r)) writeJson(KEYS.result, r);
-    }
-    var oldRoom = readJson(LEGACY_KEYS.room);
-    if (Array.isArray(oldRoom) && readJson(KEYS.room) == null) {
-      writeJson(KEYS.room, oldRoom.map(fromLegacy).filter(isValidRoomEntry).map(toRoomEntry));
-    }
-    removeKey(LEGACY_KEYS.result);
-    removeKey(LEGACY_KEYS.room);
+  function removeObsoleteData() {
+    OBSOLETE_KEYS.forEach(removeKey);
   }
 
   /* ---------- Utilitaires ---------- */
 
+  /** Identifiant aléatoire du résultat (pas de la personne) : évite de compter deux fois un résultat. */
   function createId() {
     if (window.crypto && typeof window.crypto.randomUUID === 'function') {
       return window.crypto.randomUUID();
@@ -124,10 +94,10 @@
       createdAt: r.createdAt,
       profile: r.profile,
       secondary: r.secondary,
-      axes: {
-        terrainClub: r.axes.terrainClub,
-        reperesExploration: r.axes.reperesExploration,
-        groupeIndividuel: r.axes.groupeIndividuel
+      indicators: {
+        gestion: r.indicators.gestion,
+        essai: r.indicators.essai,
+        gain: r.indicators.gain
       },
       iaLevel: r.iaLevel
     };
@@ -142,12 +112,7 @@
 
   function loadResult() {
     var r = readJson(KEYS.result);
-    if (!isValidResult(r)) return null;
-    if ('gender' in r) {
-      delete r.gender;
-      writeJson(KEYS.result, r);
-    }
-    return r;
+    return isValidResult(r) ? r : null;
   }
 
   function saveResult(record) {
@@ -179,7 +144,7 @@
     }
   };
 
-  migrateLegacyData();
+  removeObsoleteData();
 
   App.storage = {
     createRecord: createRecord,
@@ -189,11 +154,10 @@
     // exposés pour les tests
     _internal: {
       KEYS: KEYS,
-      LEGACY_KEYS: LEGACY_KEYS,
+      OBSOLETE_KEYS: OBSOLETE_KEYS,
       isValidResult: isValidResult,
       isValidRoomEntry: isValidRoomEntry,
-      fromLegacy: fromLegacy,
-      migrateLegacyData: migrateLegacyData
+      removeObsoleteData: removeObsoleteData
     }
   };
 })(window.App = window.App || {});

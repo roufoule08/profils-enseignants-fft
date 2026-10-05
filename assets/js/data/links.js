@@ -1,9 +1,10 @@
 /**
  * Liens externes du site.
  *
- * `promptLibrary` : adresse de la bibliothèque de prompts.
- *   [À VALIDER : adresse de la bibliothèque et cas d'usage à proposer pour chaque profil]
- *   Tant qu'elle vaut null, aucun lien n'est affiché (on n'invente pas d'adresse).
+ * `promptLibrary` : page d'accueil de la bibliothèque de prompts
+ * (référentiel v3, indicateurs > essai > paliers > lien).
+ * [À VALIDER : un lien direct vers un cas d'usage précis pour chaque profil.
+ *  Le référentiel ne le définit pas : on renvoie vers la bibliothèque.]
  */
 (function (App) {
   'use strict';
@@ -11,6 +12,6 @@
   App.data = App.data || {};
 
   App.data.links = Object.freeze({
-    promptLibrary: null
+    promptLibrary: 'https://promptenseignantfft.netlify.app/'
   });
 })(window.App = window.App || {});

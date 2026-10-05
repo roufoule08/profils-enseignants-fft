@@ -29,6 +29,32 @@
       .sort(function (a, b) { return (b.count - a.count) || (a.order - b.order); });
   }
 
+  /** Moyenne arrondie d'une valeur sur tous les résultats. */
+  function average(entries, pick) {
+    var sum = entries.reduce(function (s, e) { return s + pick(e); }, 0);
+    return App.scoring.roundHalfUp(sum / entries.length);
+  }
+
+  /** Moyennes de la salle : maturité IA (affichée par son nom) et les 3 indicateurs. */
+  function summary(entries) {
+    var ia = App.data.iaLevels[average(entries, function (e) { return e.iaLevel; })];
+    var indicators = App.data.indicators.map(function (ind) {
+      var value = average(entries, function (e) { return e.indicators[ind.key]; });
+      var level = App.data.indicatorLevel(ind, value);
+      return html`
+        <div class="row">
+          <span>${ind.roomName}</span>
+          <span class="track" aria-hidden="true"><i data-pct="${value}"></i></span>
+          <b>${ind.showPercent ? value + ' %' : level.libelle}</b>
+        </div>`;
+    });
+    return html`
+      <h2>Moyennes de la salle</h2>
+      <p>Maturité IA moyenne : <strong>${ia.name}</strong></p>
+      ${indicators}
+      <h2>Répartition des profils</h2>`;
+  }
+
   /**
    * @param {{status: 'idle'|'loading'|'ready'|'error', entries: Array}} room
    * @param {{isShared: boolean}} store
@@ -55,7 +81,7 @@
       var pct = Math.round(row.count / entries.length * 100);
       return html`
         <div class="row">
-          <span>${App.data.profileName(row.profile, 'n')}</span>
+          <span>${App.data.profileName(row.profile)}</span>
           <span class="track" aria-hidden="true"><i data-pct="${pct}"></i></span>
           <b aria-label="${row.count} résultat(s), ${pct} %">${row.count}</b>
         </div>`;
@@ -63,6 +89,7 @@
 
     return frame(html`
       <p>${entries.length} résultat(s) agrégé(s), sans nom ni identité${store.isShared ? '' : ' (cet appareil uniquement)'}.</p>
+      ${summary(entries)}
       ${rows}`);
   };
 

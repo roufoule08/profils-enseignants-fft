@@ -1,5 +1,26 @@
 # Journal des modifications
 
+## Mise à jour 6 : les 3 indicateurs du référentiel v3
+
+- **Référentiel v3 intégré** : `referentiel/referentiel-profils-v3.json`. Le site le lit via
+  `assets/js/data/referentiel.js`, un fichier généré par `outils/generer-referentiel.ps1`. Rien n'est recopié à la main.
+- **« Vos 3 indicateurs »** remplacent les 3 axes et le code à 3 lettres dans le portrait. Comme sur la maquette de la cheffe de projet :
+  - **Part de la gestion dans votre métier** : un %, un palier, un texte et un lien vers les prompts du bon thème ;
+  - **Envie d'essayer** : un %, un palier, un texte et un lien vers la bibliothèque ;
+  - **Temps encore à gagner avec l'IA** : le palier en toutes lettres (Modéré, Réel ou Élevé) et un conseil.
+- Les points, les maximums, les formules, les paliers, les textes et les liens sont **exactement ceux du référentiel**.
+  Seuls 4 textes sont adaptés pour l'inclusion. (D-19)
+- **Lien vers la bibliothèque de prompts** (https://promptenseignantfft.netlify.app/) dans « Votre cas d'usage pour démarrer ».
+- **La salle** affiche la maturité IA moyenne et la moyenne des 3 indicateurs.
+- **Stockage** : les portraits enregistrent les 3 indicateurs. La salle ne garde que les champs prévus par le référentiel.
+  Les résultats des versions précédentes (axes, genre) sont effacés des appareils : il suffit de refaire le questionnaire.
+- La page **Sources et méthode** explique le calcul des indicateurs.
+- **Tests** : 43 au total. Ils comprennent :
+  - le cas de test officiel du référentiel v3 ;
+  - la comparaison, sur 5 000 questionnaires, avec un calcul de contrôle écrit à partir du JSON ;
+  - la vérification, lettre par lettre, des points des questions 1 à 9.
+- **À arbitrer** : la maturité IA utilisée dans le calcul du « temps à gagner ». (D-20)
+
 ## Mise à jour 5 : conformité (audit du 5 octobre 2026) et retours de la cheffe de projet
 
 Chaque écart au référentiel est tracé dans `DECISIONS.md`. Les règles de travail sont dans `CLAUDE.md`.

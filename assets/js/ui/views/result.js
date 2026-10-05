@@ -15,19 +15,24 @@
       </section>`;
   }
 
-  /** Barre d'un axe : pôle dominant et son pourcentage (documentation de reprise, étape 3). */
-  function axisBar(axis, value) {
-    var leftWins = value >= 50;
+  /**
+   * Un indicateur v3 : nom, valeur (% ou libellé du palier pour « gain »),
+   * barre, puis « Libellé du palier. » en tête du texte, et le lien d'action
+   * du palier s'il en a un (référentiel, champ « affichage »).
+   */
+  function indicatorBlock(indicator, value) {
+    var level = App.data.indicatorLevel(indicator, value);
     return html`
-      <div class="axis">
-        <div class="axis-head">
-          <span>${axis.label}</span>
-          <b>${leftWins ? axis.left : axis.right} ${leftWins ? value : 100 - value} %</b>
+      <div class="indicator">
+        <div class="indicator-head">
+          <h3>${indicator.name}</h3>
+          <b class="indicator-value">${indicator.showPercent ? value + ' %' : level.libelle}</b>
         </div>
         <div class="track" aria-hidden="true"><i data-pct="${value}"></i></div>
+        <p>${indicator.showPercent ? html`<strong>${level.libelle}.</strong> ` : ''}${level.texte}</p>
+        ${level.lien ? html`<a class="text-link" href="${level.lien}" target="_blank" rel="noopener">${level.action} →</a>` : ''}
       </div>`;
   }
-
   function pisteCard(piste, i) {
     return html`
       <li class="piste">
@@ -75,7 +80,7 @@
               <div class="kicker">Votre portrait · <span class="family-name">${family.name}</span></div>
               <h1 tabindex="-1">${name}</h1>
               <p class="deck">«&nbsp;${p.quote}&nbsp;»</p>
-              <span class="tag">${result.code} · IA : ${ia.name}</span>
+              <span class="tag">IA : ${ia.name}</span>
               <p>${p.intro}</p>
             </div>
           </div>
@@ -85,7 +90,10 @@
               <p>Profil principal : <strong>${name}</strong>. Profil secondaire : <strong>${App.data.profileName(s)}</strong>. Votre manière d’enseigner est unique : ce portrait en éclaire les grandes tendances.</p>
             </div>
 
-            ${App.data.axes.map(function (axis) { return axisBar(axis, result.axes[axis.key]); })}
+            <section class="indicators" aria-labelledby="indicators-title">
+              <div class="kicker" id="indicators-title">Vos 3 indicateurs</div>
+              ${App.data.indicators.map(function (ind) { return indicatorBlock(ind, result.indicators[ind.key]); })}
+            </section>
 
             <div class="analysis">
               <section class="panel wide">

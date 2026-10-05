@@ -1,5 +1,5 @@
 /**
- * Calcul du portrait à partir des réponses.
+ * Calcul du portrait à partir des réponses (référentiel v3, « regles »).
  *
  * Module « pur » : il ne touche ni à la page ni au stockage, ce qui le rend
  * facile à tester (voir tests/).
@@ -8,6 +8,12 @@
   'use strict';
 
   var data = App.data;
+  var LETTERS = 'ABCDEFGHIJ';
+
+  /** Arrondi à l'entier le plus proche, 0,5 vers le haut (référentiel, « regles.indicateurs »). */
+  function roundHalfUp(x) {
+    return Math.floor(x + 0.5);
+  }
 
   /**
    * Vérifie que `answers` contient une réponse valide pour chaque question.
@@ -36,34 +42,37 @@
   }
 
   /**
-   * Score de chaque axe : pourcentage du pôle de gauche (0 à 100), obtenu en
-   * pondérant la position de chaque profil par son score.
+   * Indicateur à points (« gestion », « essai ») : somme des points des réponses
+   * choisies, divisée par le maximum, × 100, arrondie.
+   * Les points sont indexés par la lettre de la réponse (A = 1re réponse…).
    */
-  function computeAxes(scores, profiles, axes) {
-    var total = profiles.reduce(function (sum, p) { return sum + scores[p.id]; }, 0) || 1;
-    var result = {};
-    axes.forEach(function (axis) {
-      var mean = profiles.reduce(function (sum, p) {
-        return sum + scores[p.id] * p.axes[axis.key];
-      }, 0) / total;
-      result[axis.key] = Math.round((1 - mean) / 2 * 100);
+  function pointsIndicator(indicator, answers, questions) {
+    var sum = 0;
+    questions.forEach(function (q, i) {
+      var table = indicator.points[q.ref];
+      if (!table) return;
+      sum += table[LETTERS[answers[i]]] || 0;
     });
-    return result;
+    return roundHalfUp(sum / indicator.maximum * 100);
+  }
+
+  /** « gain » : arrondi((50 + gestion / 2) × (1 − maturité IA / 8)), avec la gestion déjà arrondie. */
+  function gainIndicator(gestion, iaLevel) {
+    return roundHalfUp((50 + gestion / 2) * (1 - iaLevel / 8));
   }
 
   /**
    * Calcule le portrait complet.
    * @param {number[]} answers index de la réponse choisie, pour chaque question
-   * @param {{profiles?: Array, questions?: Array, axes?: Array}} [config]
+   * @param {{profiles?: Array, questions?: Array}} [config]
    *        permet de tester avec d'autres données (par défaut : App.data)
    * @returns {{profile: string, secondary: string, scores: Object,
-   *            axes: Object, code: string, iaLevel: number}}
+   *            indicators: {gestion: number, essai: number, gain: number}, iaLevel: number}}
    */
   function computeResult(answers, config) {
     config = config || {};
     var profiles = config.profiles || data.profiles;
     var questions = config.questions || data.questions;
-    var axes = config.axes || data.axes;
 
     if (!isComplete(answers, questions)) {
       throw new Error('Questionnaire incomplet : impossible de calculer le portrait.');
@@ -93,29 +102,30 @@
         (order.indexOf(a) - order.indexOf(b));
     });
 
-    var axisScores = computeAxes(scores, profiles, axes);
-    var code = axes.map(function (axis) {
-      return axisScores[axis.key] >= 50 ? axis.code.left : axis.code.right;
-    }).join('-');
-
+    // Maturité IA : moyenne arrondie des niveaux des réponses qui en ont un.
+    // Depuis D-08, seule la question 9 en porte (voir DECISIONS.md).
     var iaLevel = 0;
     if (iaValues.length) {
       var mean = iaValues.reduce(function (s, v) { return s + v; }, 0) / iaValues.length;
-      iaLevel = Math.min(data.iaLevels.length - 1, Math.max(0, Math.floor(mean + 0.5)));
+      iaLevel = Math.min(data.iaLevels.length - 1, Math.max(0, roundHalfUp(mean)));
     }
+
+    var gestion = pointsIndicator(data.getIndicator('gestion'), answers, questions);
+    var essai = pointsIndicator(data.getIndicator('essai'), answers, questions);
 
     return {
       profile: ranking[0],
       secondary: ranking[1],
       scores: scores,
-      axes: axisScores,
-      code: code,
+      indicators: { gestion: gestion, essai: essai, gain: gainIndicator(gestion, iaLevel) },
       iaLevel: iaLevel
     };
   }
 
   App.scoring = {
     isComplete: isComplete,
-    computeResult: computeResult
+    computeResult: computeResult,
+    gainIndicator: gainIndicator,
+    roundHalfUp: roundHalfUp
   };
 })(window.App = window.App || {});

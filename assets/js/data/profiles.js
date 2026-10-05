@@ -17,8 +17,6 @@
  *   prompt    : consigne prête à copier pour un premier essai
  *   statsIntro: phrase qui relie les chiffres au profil
  *   stats     : repères chiffrés issus des études { value, label, source }
- *   axes      : position du profil sur chaque axe, de -1 à +1
- *               (-1 = Terrain / Repères / Groupe, +1 = Club / Exploration / Individuel)
  */
 (function (App) {
   'use strict';
@@ -57,8 +55,7 @@
         { value: '87 %', label: 'des personnes interrogées encadrent l’école de tennis', source: NA_2024 },
         { value: '68 %', label: 'encadrent le mini-tennis', source: NA_2024 },
         { label: 'La transmission est décrite comme « la plus belle satisfaction » du métier', source: 'Rundstadler, 2025 (environ 40 entretiens, 12 clubs)' }
-      ],
-      axes: { terrainClub: -0.8, reperesExploration: 0.4, groupeIndividuel: -0.8 }
+      ]
     },
     {
       id: 'coach',
@@ -88,8 +85,7 @@
       stats: [
         { value: '55 %', label: 'des personnes interrogées encadrent un centre d’entraînement jeunes', source: NA_2024 },
         { value: '19,5 %', label: 'souhaitent se former à la préparation mentale, 16,6 % à la préparation physique', source: NA_2024 }
-      ],
-      axes: { terrainClub: -0.6, reperesExploration: -0.4, groupeIndividuel: 0.8 }
+      ]
     },
     {
       id: 'batisseur',
@@ -119,8 +115,7 @@
       stats: [
         { value: '12 clubs', label: 'étudiés : coordonner les projets et faire le lien avec la fédération y sont des rôles clés', source: 'Rundstadler, 2025' },
         { value: '9 %', label: 'des personnes interrogées sont titulaires du DESJEPS', source: NA_2024 }
-      ],
-      axes: { terrainClub: 0.9, reperesExploration: -0.2, groupeIndividuel: -0.6 }
+      ]
     },
     {
       id: 'entrepreneur',
@@ -151,8 +146,7 @@
         { value: '45 %', label: 'des personnes interrogées ont une part d’activité libérale', source: NA_2024 },
         { value: '26 %', label: 'travaillent dans plusieurs structures', source: NA_2024 },
         { value: '82 %', label: 'encadrent des adultes en tennis loisir', source: NA_2024 }
-      ],
-      axes: { terrainClub: 0.7, reperesExploration: 0.7, groupeIndividuel: 0.7 }
+      ]
     },
     {
       id: 'jeune-pro',
@@ -182,8 +176,7 @@
       stats: [
         { value: '30 %', label: 'des personnes interrogées ont entre 18 et 30 ans', source: NA_2024 },
         { value: '69 %', label: 'des 18-30 ans ont un projet de formation diplômante', source: NA_2024 }
-      ],
-      axes: { terrainClub: -0.3, reperesExploration: 0.9, groupeIndividuel: -0.2 }
+      ]
     },
     {
       id: 'sage',
@@ -213,8 +206,7 @@
       stats: [
         { value: '24 %', label: 'des personnes interrogées ont 51 ans et plus', source: NA_2024 },
         { label: 'Avec l’expérience, on apprend d’abord par la pratique, sur le terrain', source: 'Cortela et al., 2022 ; Anderson et al., 2021' }
-      ],
-      axes: { terrainClub: -0.4, reperesExploration: -0.9, groupeIndividuel: 0.1 }
+      ]
     }
   ]);
 

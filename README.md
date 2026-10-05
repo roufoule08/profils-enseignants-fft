@@ -27,15 +27,20 @@ Le site est en HTML, CSS et JavaScript « purs ». Il n'y a ni framework, ni ét
 ```
 index.html                  Page unique du site
 CLAUDE.md                   Règles de travail pour l'agent IA et pour l'équipe
+referentiel/
+  referentiel-profils-v3.json  RÉFÉRENTIEL : source de vérité (indicateurs, paliers, règles)
+outils/
+  generer-referentiel.ps1   Régénère assets/js/data/referentiel.js après une modification du JSON
 DECISIONS.md                Écarts au référentiel et leur validation
 assets/
   css/styles.css            Tout le style (mobile d'abord, grand écran en fin de fichier)
   img/profils/*.jpg         Photos des six profils (droits à l'image à valider : DECISIONS.md D-10)
   js/
     data/                   CONTENU : c'est ici qu'on modifie les textes
-      profiles.js           Les six profils et leurs 3 familles (textes, photo, position sur les axes)
+      referentiel.js        Copie du JSON pour le navigateur (GÉNÉRÉ : ne pas modifier à la main)
+      indicators.js         Les 3 indicateurs, lus dans le référentiel (+ écarts tracés)
+      profiles.js           Les six profils et leurs 3 familles (textes, photo)
       questions.js          Les questions, les réponses et les points qu'elles rapportent
-      axes.js               Les trois axes du portrait
       links.js              Liens externes (bibliothèque de prompts)
       methode.js            Contenu de la page « Sources et méthode »
     core/                   LOGIQUE, sans affichage
@@ -55,6 +60,7 @@ tests/
 | Je veux…                               | Fichier à modifier             |
 |----------------------------------------|--------------------------------|
 | Changer un nom de profil               | `assets/js/data/profiles.js` (champ `names.both`, affiché partout) |
+| Changer un point, un palier ou un texte d'indicateur | `referentiel/referentiel-profils-v3.json`, puis lancer `outils/generer-referentiel.ps1` |
 | Changer un texte de profil, une piste IA ou un chiffre | `assets/js/data/profiles.js` |
 | Changer une question ou une réponse    | `assets/js/data/questions.js`  |
 | Changer les points d'une réponse       | `assets/js/data/questions.js` (champ `points`) |
@@ -80,8 +86,9 @@ Tout changement de texte ou de calcul par rapport au référentiel doit être aj
 2. Le profil qui a le plus de points est le profil principal, et le suivant est le profil secondaire.
    En cas d'égalité, le profil choisi à la question « Votre principal atout dans le métier ? » passe devant.
    Si l'égalité persiste, c'est l'ordre des profils qui décide.
-3. Chaque axe (Terrain/Club, Repères/Exploration, Groupe/Individuel) est la moyenne
-   des positions des profils, pondérée par leurs points.
+3. Les 3 indicateurs suivent le référentiel v3 (`regles.indicateurs`). La part de la gestion et l'envie
+   d'essayer sont la somme des points des réponses, divisée par le maximum, en %. Le temps à gagner
+   vaut arrondi((50 + gestion / 2) × (1 − niveau IA / 8)). Le palier affiché est le dernier atteint.
 4. Le niveau IA (0 à 4) correspond directement à la réponse à la question 9 (fréquence d'usage).
    La question 10 (usage principal) ajoute +0,5 à deux profils, sauf « Je n'ai jamais utilisé l'IA ».
 
@@ -89,7 +96,7 @@ Tout changement de texte ou de calcul par rapport au référentiel doit être aj
 
 Les résultats sont enregistrés uniquement dans le navigateur de l'appareil (`localStorage`).
 Aucune donnée n'est envoyée sur internet, et « La salle » ne conserve que des données anonymes :
-profil, profil secondaire, axes et niveau IA.
+profil, profil secondaire, 3 indicateurs, niveau IA et date.
 
 Pour l'instant, « La salle » ne montre donc que les résultats de l'appareil utilisé. Le stockage
 (`App.storage.roomStore` dans `storage.js`) est prévu pour être remplacé par une base de

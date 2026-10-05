@@ -5,6 +5,10 @@
  *   - `points`  : points ajoutés aux profils, ex. { passeur: 1 }
  *   - `iaLevel` : niveau d'usage de l'IA de 0 à 4 (questions IA uniquement)
  *
+ * `ref` : identifiant de la question dans le référentiel (Q1 à Q10). Les réponses
+ * sont dans le même ordre que les lettres A, B, C… du référentiel : c'est ce qui
+ * permet de retrouver les points des indicateurs (voir data/indicators.js).
+ *
  * `tiebreaker: true` : en cas d'égalité de score, le profil désigné par la
  * réponse à cette question passe devant.
  *
@@ -24,6 +28,7 @@
   App.data.questions = Object.freeze([
     {
       id: 'meilleur-moment',
+      ref: 'Q1',
       text: 'Votre meilleur moment de la semaine ?',
       answers: [
         { label: 'Voir mes élèves progresser', points: { passeur: 1 } },
@@ -36,6 +41,7 @@
     },
     {
       id: 'temps-hors-court',
+      ref: 'Q2',
       text: 'Qu’est-ce qui vous prend le plus de temps hors du court ?',
       answers: [
         { label: 'Préparer les séances', points: { passeur: 1 } },
@@ -48,6 +54,7 @@
     },
     {
       id: 'atout',
+      ref: 'Q3',
       text: 'Votre principal atout dans le métier ?',
       tiebreaker: true,
       answers: [
@@ -61,6 +68,7 @@
     },
     {
       id: 'public',
+      ref: 'Q4',
       text: 'Avec qui aimez-vous le plus travailler ?',
       answers: [
         { label: 'Faire découvrir le tennis aux enfants (école de tennis, mini-tennis)', points: { passeur: 1 } },
@@ -73,6 +81,7 @@
     },
     {
       id: 'deux-heures',
+      ref: 'Q5',
       text: 'On vous offre deux heures de libre. Vous…',
       answers: [
         { label: 'Mettez en place de nouvelles activités pour vos groupes', points: { passeur: 1 } },
@@ -85,6 +94,7 @@
     },
     {
       id: 'anciennete',
+      ref: 'Q6',
       text: 'Où en êtes-vous dans le métier ?',
       answers: [
         { label: 'Moins de 3 ans', points: { 'jeune-pro': 2 } },
@@ -95,6 +105,7 @@
     },
     {
       id: 'nouvel-outil',
+      ref: 'Q7',
       text: 'Face à un nouvel outil digital, vous…',
       answers: [
         { label: 'Testez vous-même pour les élèves', points: { passeur: 1 } },
@@ -107,6 +118,7 @@
     },
     {
       id: 'devise',
+      ref: 'Q8',
       text: 'Votre devise ?',
       answers: [
         { label: 'Chaque enfant progresse à son rythme', points: { passeur: 1 } },
@@ -121,6 +133,7 @@
       // Question clé pour l'analyse : fréquence d'usage, du jamais au quotidien.
       // Elle donne à elle seule le niveau IA du portrait (0 à 4).
       id: 'ia-frequence',
+      ref: 'Q9',
       text: 'À quelle fréquence utilisez-vous l’IA (ChatGPT, Copilot, Gemini…) ?',
       answers: [
         { label: 'Je ne l’ai jamais utilisée', iaLevel: 0 },
@@ -136,6 +149,7 @@
       // les uns que les autres. Le niveau IA vient de la question précédente.
       // Chaque usage donne +0,5 aux deux profils dont il est le plus proche.
       id: 'ia-usages',
+      ref: 'Q10',
       text: 'Pour quel usage principal l’avez-vous déjà utilisée ?',
       answers: [
         { id: 'seances', label: 'Préparer ou enrichir des séances d’entraînement', points: { passeur: 0.5, coach: 0.5 } },

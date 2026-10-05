@@ -352,9 +352,26 @@ img { max-width: 100%; }
   border-left: 5px solid var(--color-orange);
 }
 
-.axis { margin: 16px 0; }
-.axis-head { display: flex; justify-content: space-between; font-weight: 700; }
-.axis .track { margin-top: 7px; }
+/* Vos 3 indicateurs (référentiel v3) */
+.indicators { margin: 22px 0 0; }
+.indicators > .kicker { color: var(--color-orange); margin-bottom: 4px; }
+.indicator { padding: 14px 0; border-bottom: 1px solid var(--color-line); }
+.indicator:last-child { border-bottom: 0; }
+.indicator-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.indicator h3 {
+  margin: 0;
+  font: 700 16px var(--font-body);
+  text-transform: none;
+  color: var(--color-ink);
+}
+.indicator-value {
+  flex: none;
+  font: 900 26px / 1 var(--font-display);
+  color: var(--color-green);
+}
+.indicator .track { margin: 8px 0 10px; }
+.indicator p { margin: 0 0 6px; }
+.indicator .text-link { color: var(--color-green); }
 
 .analysis { display: grid; gap: 12px; margin-top: 22px; }
 
@@ -451,6 +468,7 @@ img { max-width: 100%; }
 .room { padding: 24px 13px; background: #fff; }
 .room h1 { font-size: 58px; color: var(--color-green); margin: 0; }
 .room .kicker { color: var(--color-orange); }
+.room h2 { font-size: 30px; color: var(--color-green); margin: 26px 0 6px; }
 
 .row {
   display: grid;

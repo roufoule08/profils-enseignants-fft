@@ -3,6 +3,9 @@
   'use strict';
 
   var questions = App.data.questions;
+  var REF = App.referentiel;
+  var CODE_TO_ID = { P: 'passeur', C: 'coach', B: 'batisseur', E: 'entrepreneur', J: 'jeune-pro', S: 'sage' };
+  var LETTERS = 'ABCDEFGHIJ';
 
   /** Générateur pseudo-aléatoire déterministe (mêmes tirages à chaque exécution). */
   function seededRandom(seed) {
@@ -16,10 +19,14 @@
     return questions.map(function (q) { return Math.floor(rand() * q.answers.length); });
   }
 
+  function newRecord(answers) {
+    return App.storage.createRecord(App.scoring.computeResult(answers || questions.map(function () { return 0; })));
+  }
+
   /** Sauvegarde puis restaure les clés de stockage du site autour d'un test. */
   function withCleanStorage(fn) {
-    var keys = [App.storage._internal.KEYS.result, App.storage._internal.KEYS.room,
-      App.storage._internal.LEGACY_KEYS.result, App.storage._internal.LEGACY_KEYS.room];
+    var I = App.storage._internal;
+    var keys = [I.KEYS.result, I.KEYS.room].concat(I.OBSOLETE_KEYS);
     var saved = keys.map(function (k) { return localStorage.getItem(k); });
     keys.forEach(function (k) { localStorage.removeItem(k); });
     function restore() {
@@ -40,6 +47,94 @@
       App.views.methode()
     ].map(String);
   }
+
+  /**
+   * Calcul de contrôle des indicateurs, écrit indépendamment du site,
+   * en lisant directement le JSON du référentiel (« regles.indicateurs »).
+   */
+  function referenceIndicators(answers, iaLevel) {
+    function byPoints(cle) {
+      var ind = REF.indicateurs.find(function (i) { return i.cle === cle; });
+      var sum = 0;
+      Object.keys(ind.points).forEach(function (qid) {
+        var index = Number(qid.slice(1)) - 1;
+        sum += ind.points[qid][LETTERS[answers[index]]] || 0;
+      });
+      return Math.round(sum / ind.maximum * 100);
+    }
+    var gestion = byPoints('gestion');
+    return {
+      gestion: gestion,
+      essai: byPoints('essai'),
+      gain: Math.round((50 + gestion / 2) * (1 - iaLevel / 8))
+    };
+  }
+
+  /* ---------- Référentiel ---------- */
+
+  test('Référentiel : la version 3 est chargée', function () {
+    assert(REF, 'App.referentiel absent : lancer outils/generer-referentiel.ps1');
+    assertEqual(REF.version, '3.0');
+    assertEqual(REF.indicateurs.map(function (i) { return i.cle; }), ['gestion', 'essai', 'gain']);
+  });
+
+  test('Référentiel : les questions 1 à 9 donnent les mêmes points de profil que le référentiel, lettre par lettre', function () {
+    // Garantit que l'ordre des réponses du site suit les lettres A, B, C… du référentiel,
+    // ce dont dépendent les points des indicateurs.
+    for (var qi = 0; qi < 9; qi++) {
+      var refQ = REF.questions[qi];
+      assertEqual(questions[qi].ref, refQ.id, 'Identifiant de la question ' + (qi + 1));
+      assertEqual(questions[qi].answers.length, refQ.reponses.length, refQ.id + ' : nombre de réponses');
+      refQ.reponses.forEach(function (rep, ai) {
+        var expected = {};
+        Object.keys(rep.points).forEach(function (code) { expected[CODE_TO_ID[code]] = rep.points[code]; });
+        assertEqual(questions[qi].answers[ai].points || {}, expected, refQ.id + ' ' + rep.lettre + ' : points');
+      });
+    }
+  });
+
+  test('Référentiel : la question 9 donne les mêmes niveaux IA', function () {
+    REF.questions[8].reponses.forEach(function (rep, i) {
+      assertEqual(questions[8].answers[i].iaLevel, rep.niveau_ia, 'Q9 ' + rep.lettre);
+    });
+  });
+
+  test('Référentiel : 6 profils dans l’ordre P, C, B, E, J, S, avec leur famille', function () {
+    assertEqual(App.data.profiles.map(function (p) { return p.id; }), REF.profils.map(function (p) { return CODE_TO_ID[p.code]; }));
+    REF.profils.forEach(function (rp) {
+      assertEqual(App.data.getProfile(CODE_TO_ID[rp.code]).family, rp.famille, rp.code + ' : famille');
+    });
+    REF.familles.forEach(function (f) { assertEqual(App.data.families[f.code].name, f.nom, 'Famille ' + f.code); });
+  });
+
+  test('Référentiel : chaque écart de texte des indicateurs vise un champ existant (DECISIONS.md D-19)', function () {
+    Object.keys(App.data.indicatorOverrides).forEach(function (key) {
+      var parts = key.split('/');
+      var ind = REF.indicateurs.find(function (i) { return i.cle === parts[0]; });
+      assert(ind, 'Indicateur inconnu : ' + key);
+      var palier = ind.paliers.find(function (p) { return String(p.a_partir_de) === parts[1]; });
+      assert(palier && parts[2] in palier, 'Champ inconnu : ' + key);
+      assert(palier[parts[2]] !== App.data.indicatorOverrides[key], 'Écart inutile (identique au référentiel) : ' + key);
+    });
+  });
+
+  test('Référentiel : les autres textes, seuils et liens des indicateurs sont ceux du référentiel', function () {
+    REF.indicateurs.forEach(function (ri) {
+      var ind = App.data.getIndicator(ri.cle);
+      assertEqual(ind.name, ri.nom);
+      assertEqual(ind.levels.length, ri.paliers.length);
+      ri.paliers.forEach(function (rp, i) {
+        var site = ind.levels[i];
+        assertEqual(site.a_partir_de, rp.a_partir_de, ri.cle + ' : seuil');
+        assertEqual(site.lien, rp.lien, ri.cle + ' : lien');
+        ['libelle', 'texte', 'action'].forEach(function (field) {
+          var key = ri.cle + '/' + rp.a_partir_de + '/' + field;
+          if (!(key in App.data.indicatorOverrides)) assertEqual(site[field], rp[field], key);
+        });
+      });
+    });
+  });
+
   /* ---------- Données ---------- */
 
   test('Données : chaque point de question vise un profil existant', function () {
@@ -52,22 +147,11 @@
     });
   });
 
-  test('Données : chaque profil a une position sur chaque axe, une famille et une photo', function () {
+  test('Données : chaque profil a une famille, une photo et une phrase de lien avec les chiffres', function () {
     App.data.profiles.forEach(function (p) {
-      App.data.axes.forEach(function (axis) {
-        var v = p.axes[axis.key];
-        assert(typeof v === 'number' && v >= -1 && v <= 1, p.id + ' : axe ' + axis.key + ' invalide');
-      });
       assert(App.data.families[p.family], p.id + ' : famille inconnue');
       assert(/^assets\/img\/profils\/.+\.jpg$/.test(p.image), p.id + ' : photo manquante');
       assert(p.statsIntro, p.id + ' : phrase de lien avec les chiffres');
-    });
-  });
-
-  test('Données : 2 profils par famille (documentation de reprise)', function () {
-    Object.keys(App.data.families).forEach(function (f) {
-      var n = App.data.profiles.filter(function (p) { return p.family === f; }).length;
-      assertEqual(n, 2, 'Famille ' + f);
     });
   });
 
@@ -82,14 +166,10 @@
     App.data.profiles.forEach(function (p) {
       assertEqual(p.strengths.length, 3, p.id + ' : points forts');
       assertEqual(p.pistes.length, 3, p.id + ' : pistes');
-      p.pistes.forEach(function (piste) {
-        assert(piste.title && piste.text, p.id + ' : piste incomplète');
-      });
+      p.pistes.forEach(function (piste) { assert(piste.title && piste.text, p.id + ' : piste incomplète'); });
       assert(p.prompt && p.prompt.length > 20, p.id + ' : prompt');
       assert(p.stats.length >= 1, p.id + ' : chiffres');
-      p.stats.forEach(function (st) {
-        assert(st.label && st.source, p.id + ' : chaque chiffre doit avoir un texte et une source');
-      });
+      p.stats.forEach(function (st) { assert(st.label && st.source, p.id + ' : chaque chiffre doit avoir un texte et une source'); });
     });
   });
 
@@ -101,14 +181,34 @@
     });
   });
 
-  test('Contenu : 5 niveaux IA, chacun avec un nom et un message', function () {
-    assertEqual(App.data.iaLevels.length, 5);
-    App.data.iaLevels.forEach(function (l) { assert(l.name && l.message, 'Niveau IA incomplet'); });
+  /* ---------- Calcul ---------- */
+
+  test('Calcul : cas de test du référentiel v3 (regles.test)', function () {
+    // Q1 A, Q2 A, Q3 A, Q4 E, Q5 A, Q6 B, Q7 E, Q8 A, Q9 C, Q10 D.
+    // Q10 D du référentiel = « Préparer ou enrichir des séances » sur le site (mêmes points : P +0,5, C +0,5).
+    var expected = REF.regles.test.attendu;
+    var r = App.scoring.computeResult([0, 0, 0, 4, 0, 1, 4, 0, 2, 0]);
+    assertEqual(r.profile, CODE_TO_ID[expected.profil], 'Profil');
+    assertEqual(r.secondary, CODE_TO_ID[expected.secondaire], 'Secondaire');
+    assertEqual(r.indicators.gestion, expected.gestion, 'Gestion');
+    assertEqual(r.indicators.essai, expected.essai, 'Essai');
+    // La formule du gain donne le résultat du référentiel pour son niveau IA (3)…
+    assertEqual(App.scoring.gainIndicator(expected.gestion, expected.ia), expected.gain, 'Formule du gain');
+    // … mais, depuis D-08, le niveau IA vient de Q9 seule (C = 2), donc le gain du site diffère.
+    assertEqual(r.iaLevel, 2, 'Niveau IA (D-08)');
+    assertEqual(r.indicators.gain, App.scoring.gainIndicator(expected.gestion, 2), 'Gain (D-08)');
   });
 
-  /* ---------- Calcul : identique au calcul de référence ---------- */
+  test('Calcul : indicateurs identiques au calcul de contrôle sur 5 000 questionnaires aléatoires', function () {
+    var rand = seededRandom(7);
+    for (var n = 0; n < 5000; n++) {
+      var answers = randomAnswers(rand);
+      var r = App.scoring.computeResult(answers);
+      assertEqual(r.indicators, referenceIndicators(answers, r.iaLevel), 'Réponses ' + JSON.stringify(answers));
+    }
+  });
 
-  test('Calcul : résultat identique au calcul de référence sur 5 000 questionnaires aléatoires', function () {
+  test('Calcul : profils identiques au calcul de référence sur 5 000 questionnaires aléatoires', function () {
     var rand = seededRandom(42);
     for (var n = 0; n < 5000; n++) {
       var answers = randomAnswers(rand);
@@ -117,21 +217,43 @@
       var label = 'Réponses ' + JSON.stringify(answers);
       assertEqual(actual.profile, window.LEGACY_IDS[expected.profile], label + ' — profil');
       assertEqual(actual.secondary, window.LEGACY_IDS[expected.second], label + ' — secondaire');
-      assertEqual(actual.axes, { terrainClub: expected.t, reperesExploration: expected.x, groupeIndividuel: expected.g }, label + ' — axes');
-      assertEqual(actual.code, expected.code, label + ' — code');
       assertEqual(actual.iaLevel, expected.ia, label + ' — niveau IA');
     }
   });
 
-  test('Calcul : réponses « toutes identiques » pour chaque profil', function () {
-    for (var i = 0; i < 6; i++) {
-      var answers = questions.map(function (q) { return Math.min(i, q.answers.length - 1); });
-      var expected = window.legacyCalc(answers);
-      assertEqual(App.scoring.computeResult(answers).profile, window.LEGACY_IDS[expected.profile]);
+  test('Calcul : bornes des indicateurs (0 et 100 %)', function () {
+    var gestion = App.data.getIndicator('gestion');
+    var essai = App.data.getIndicator('essai');
+    function maxAnswers(ind) {
+      return questions.map(function (q) {
+        var table = ind.points[q.ref] || {};
+        var best = 0;
+        q.answers.forEach(function (a, i) { if ((table[LETTERS[i]] || 0) > (table[LETTERS[best]] || 0)) best = i; });
+        return best;
+      });
     }
+    assertEqual(App.scoring.computeResult(maxAnswers(gestion)).indicators.gestion, 100, 'Gestion maximale');
+    assertEqual(App.scoring.computeResult(maxAnswers(essai)).indicators.essai, 100, 'Essai maximal');
+    var none = questions.map(function (q) { return q.answers.length - 1; });
+    none[0] = 0; none[1] = 1; none[2] = 0; none[3] = 0; none[4] = 1; none[5] = 0; none[6] = 5; none[7] = 0;
+    var r = App.scoring.computeResult(none);
+    assertEqual(r.indicators.gestion, 0, 'Gestion nulle');
+    assertEqual(r.indicators.essai, 0, 'Essai nul');
   });
 
-  test('Calcul : le niveau IA vient de la question sur la fréquence d’usage', function () {
+  test('Calcul : paliers (le dernier dont le seuil est atteint)', function () {
+    var essai = App.data.getIndicator('essai');
+    assertEqual(App.data.indicatorLevel(essai, 0).a_partir_de, 0);
+    assertEqual(App.data.indicatorLevel(essai, 32).a_partir_de, 0);
+    assertEqual(App.data.indicatorLevel(essai, 33).a_partir_de, 33);
+    assertEqual(App.data.indicatorLevel(essai, 66).a_partir_de, 66);
+    var gain = App.data.getIndicator('gain');
+    assertEqual(App.data.indicatorLevel(gain, 39).libelle, 'Modéré');
+    assertEqual(App.data.indicatorLevel(gain, 40).libelle, 'Réel');
+    assertEqual(App.data.indicatorLevel(gain, 70).libelle, 'Élevé');
+  });
+
+  test('Calcul : le niveau IA vient de la question sur la fréquence d’usage (D-08)', function () {
     var freq = questions.findIndex(function (q) { return q.id === 'ia-frequence'; });
     for (var level = 0; level < 5; level++) {
       var answers = questions.map(function () { return 0; });
@@ -146,18 +268,6 @@
     assert(jamais && !jamais.points, 'Aucun point attendu');
   });
 
-  test('Calcul : exemple chiffré de la documentation de reprise', function () {
-    // Q1 A, Q2 A, Q3 A, Q4 E, Q5 A, Q6 B, Q7 E, Q8 A, Q9 C, Q10 « séances ».
-    // Q10 « séances » donne les mêmes points que l'ancienne réponse D (P +0,5, C +0,5).
-    var r = App.scoring.computeResult([0, 0, 0, 4, 0, 1, 4, 0, 2, 0]);
-    assertEqual(r.profile, 'passeur');
-    assertEqual(r.secondary, 'jeune-pro');
-    assertEqual(r.axes, { terrainClub: 84, reperesExploration: 31, groupeIndividuel: 72 });
-    assertEqual(r.code, 'T-X-G');
-    // La documentation donne 3 (moyenne Q9 et Q10) ; depuis D-08, le niveau vient de Q9 seule : C = 2.
-    assertEqual(r.iaLevel, 2);
-  });
-
   test('Calcul : refuse un questionnaire incomplet ou invalide', function () {
     var incomplete = questions.map(function () { return 0; });
     incomplete[3] = null;
@@ -168,28 +278,26 @@
     assert(!App.scoring.isComplete(questions.map(function () { return 99; })), 'Index hors limites');
   });
 
+  test('Calcul : plus d’axes ni de code à 3 lettres (supprimés en v3)', function () {
+    var r = App.scoring.computeResult(questions.map(function () { return 0; }));
+    assert(!('axes' in r) && !('code' in r), 'Axes ou code encore calculés');
+    assert(!App.data.axes, 'Données des axes encore chargées');
+  });
+
   /* ---------- Bugs corrigés ---------- */
 
   test('Bug corrigé : afficher « La salle » ne modifie plus l’ordre des profils', function () {
     var before = App.data.profiles.map(function (p) { return p.id; });
-    var entries = [{ profile: 'sage' }, { profile: 'sage' }, { profile: 'coach' }];
-    var counted = App.views._countByProfile(entries);
+    var counted = App.views._countByProfile([{ profile: 'sage' }, { profile: 'sage' }, { profile: 'coach' }]);
     assertEqual(counted[0].profile.id, 'sage');
     assertEqual(counted[1].profile.id, 'coach');
     assertEqual(App.data.profiles.map(function (p) { return p.id; }), before, 'Ordre des profils modifié');
   });
 
-  test('Bug corrigé : le calcul ne dépend pas de l’affichage de la salle', function () {
-    var answers = [0, 0, 0, 0, 0, 1, 0, 0, 2, 2];
-    var first = App.scoring.computeResult(answers);
-    App.views._countByProfile([{ profile: 'sage' }, { profile: 'sage' }]);
-    assertEqual(App.scoring.computeResult(answers), first);
-  });
-
   test('Bug corrigé : un même résultat n’est compté qu’une fois dans la salle', function () {
     return withCleanStorage(function () {
       var store = App.storage.roomStore;
-      var record = App.storage.createRecord(App.scoring.computeResult(questions.map(function () { return 0; })));
+      var record = newRecord();
       return store.add(record)
         .then(function () { return store.add(record); })
         .then(function () { return store.list(); })
@@ -218,53 +326,28 @@
 
   test('Stockage : un portrait sauvegardé se relit à l’identique', function () {
     return withCleanStorage(function () {
-      var record = App.storage.createRecord(App.scoring.computeResult([1, 1, 1, 1, 1, 1, 1, 1, 3, 3]));
+      var record = newRecord([1, 1, 1, 1, 1, 1, 1, 1, 3, 3]);
       App.storage.saveResult(record);
       assertEqual(App.storage.loadResult(), record);
     });
   });
 
-  test('Stockage : les résultats de l’ancienne version sont repris', function () {
+  test('Stockage : les résultats des versions précédentes (axes, genre) sont effacés', function () {
     return withCleanStorage(function () {
-      var L = App.storage._internal.LEGACY_KEYS;
-      var old = window.legacyCalc([3, 3, 3, 3, 3, 2, 3, 3, 3, 2]);
-      localStorage.setItem(L.result, JSON.stringify(old));
-      localStorage.setItem(L.room, JSON.stringify([
-        { profile: old.profile, second: old.second, t: old.t, x: old.x, g: old.g, ia: old.ia },
-        { profile: 'Z', second: 'P', t: 1, x: 1, g: 1, ia: 0 } // invalide : ignoré
-      ]));
-      App.storage._internal.migrateLegacyData();
-      var r = App.storage.loadResult();
-      assert(r, 'Portrait repris');
-      assertEqual(r.profile, 'entrepreneur');
-      assertEqual(r.code, old.code);
-      assertEqual(localStorage.getItem(L.result), null, 'Ancienne clé supprimée');
-      return App.storage.roomStore.list().then(function (rows) {
-        assertEqual(rows.length, 1);
-        assertEqual(rows[0].profile, 'entrepreneur');
-      });
+      var I = App.storage._internal;
+      I.OBSOLETE_KEYS.forEach(function (k) { localStorage.setItem(k, JSON.stringify({ gender: 'f', axes: {} })); });
+      I.removeObsoleteData();
+      I.OBSOLETE_KEYS.forEach(function (k) { assertEqual(localStorage.getItem(k), null, k); });
     });
   });
 
-  test('Stockage : le genre enregistré par une version précédente est effacé', function () {
+  test('Stockage : la salle ne conserve que le résultat anonyme et l’horodatage', function () {
     return withCleanStorage(function () {
-      var computed = App.scoring.computeResult(questions.map(function () { return 0; }));
-      computed.gender = 'f';
-      App.storage.saveResult(App.storage.createRecord(computed));
-      var r = App.storage.loadResult();
-      assert(r && !('gender' in r), 'Genre effacé du portrait');
-      var raw = localStorage.getItem(App.storage._internal.KEYS.result);
-      assert(raw.indexOf('gender') < 0, 'Genre effacé du stockage');
-    });
-  });
-
-  test('Stockage : la salle ne conserve que des données anonymes', function () {
-    return withCleanStorage(function () {
-      var record = App.storage.createRecord(App.scoring.computeResult(questions.map(function () { return 2; })));
-      return App.storage.roomStore.add(record)
+      return App.storage.roomStore.add(newRecord())
         .then(function () { return App.storage.roomStore.list(); })
         .then(function (rows) {
-          assertEqual(Object.keys(rows[0]).sort(), ['axes', 'createdAt', 'iaLevel', 'id', 'profile', 'secondary']);
+          assertEqual(Object.keys(rows[0]).sort(), ['createdAt', 'iaLevel', 'id', 'indicators', 'profile', 'secondary']);
+          assertEqual(Object.keys(rows[0].indicators).sort(), ['essai', 'gain', 'gestion']);
         });
     });
   });
@@ -285,43 +368,66 @@
     assert(out.indexOf('100 %') >= 0, 'Progression à 100 %');
   });
 
-  test('Affichage : boutons du questionnaire « Servir le prochain point » et « Rejouer le point d’avant »', function () {
+  test('Affichage : boutons « Servir le prochain point » et « Rejouer le point d’avant »', function () {
     var out = App.views.quiz({ index: 1, answers: questions.map(function () { return 0; }) }).toString();
     assert(out.indexOf('Servir le prochain point') >= 0, 'Bouton suivant');
     assert(out.indexOf('Rejouer le point d’avant') >= 0, 'Bouton précédent');
   });
 
-  test('Affichage : le portrait montre les pistes IA, le cas d’usage à copier, les chiffres reliés au profil et leurs sources', function () {
-    var record = App.storage.createRecord(App.scoring.computeResult(questions.map(function () { return 0; })));
+  test('Affichage : le portrait montre les 3 indicateurs, leur palier, leur texte et leur lien', function () {
+    var record = newRecord([0, 0, 0, 4, 0, 1, 4, 0, 2, 0]);
+    var out = App.views.result(record).toString();
+    assert(out.indexOf('Vos 3 indicateurs') >= 0, 'Titre du bloc');
+    App.data.indicators.forEach(function (ind) {
+      var value = record.indicators[ind.key];
+      var level = App.data.indicatorLevel(ind, value);
+      assert(out.indexOf(App.ui.escapeHtml(ind.name)) >= 0, ind.key + ' : nom');
+      assert(out.indexOf(App.ui.escapeHtml(level.texte)) >= 0, ind.key + ' : texte du palier');
+      assert(out.indexOf(ind.showPercent ? value + ' %' : App.ui.escapeHtml(level.libelle)) >= 0, ind.key + ' : valeur affichée');
+      if (level.lien) assert(out.indexOf('href="' + level.lien + '"') >= 0, ind.key + ' : lien');
+    });
+  });
+
+  test('Affichage : le portrait montre les pistes IA, le cas d’usage à copier et les chiffres reliés au profil', function () {
+    var record = newRecord();
     var out = App.views.result(record).toString();
     var p = App.data.getProfile(record.profile);
     assertEqual((out.match(/class="piste"/g) || []).length, 3, 'Pistes');
     assert(out.indexOf('Votre cas d’usage pour démarrer') >= 0, 'Titre du cas d’usage');
     assert(out.indexOf('data-action="copy-prompt"') >= 0, 'Bouton copier');
+    assert(out.indexOf('href="' + App.data.links.promptLibrary + '"') >= 0, 'Lien vers la bibliothèque');
     assert(out.indexOf(App.ui.escapeHtml(p.statsIntro)) >= 0, 'Phrase de lien avec le profil');
     assert(out.indexOf(App.ui.escapeHtml(p.stats[0].source)) >= 0, 'Source des chiffres');
     assert(out.indexOf('href="#methode"') >= 0, 'Lien vers Sources et méthode');
   });
 
-  test('Affichage : retraits demandés (rapport à l’IA, vigilance, textes d’axes inventés)', function () {
-    var record = App.storage.createRecord(App.scoring.computeResult(questions.map(function () { return 0; })));
-    var out = App.views.result(record).toString();
+  test('Affichage : retraits demandés (axes, code, rapport à l’IA, vigilance)', function () {
+    var out = App.views.result(newRecord()).toString();
+    assert(out.indexOf('Terrain ↔ Club') < 0, 'Axes retirés');
+    assert(!/[TK]-[RX]-[GI]/.test(out), 'Code à 3 lettres retiré');
     assert(out.indexOf('Votre rapport à l’IA') < 0, 'Bloc « Votre rapport à l’IA » retiré');
-    assert(out.indexOf(App.data.iaLevels[record.iaLevel].message) < 0, 'Message du niveau IA retiré');
     assert(out.indexOf('vigilance') < 0, 'Plus de « points de vigilance »');
-    assert(out.indexOf('Votre façon d’enseigner') < 0, 'Interprétation des axes retirée');
-    assert(!App.scoring.interpretAxes, 'Plus de seuils 60/40 dans le calcul');
   });
 
-  test('Affichage : aucun lien vers la bibliothèque tant que son adresse n’est pas validée', function () {
-    var record = App.storage.createRecord(App.scoring.computeResult(questions.map(function () { return 0; })));
-    if (App.data.links.promptLibrary) return;
-    assert(App.views.result(record).toString().indexOf('bibliothèque de prompts') < 0);
+  test('Affichage : la bibliothèque de prompts est celle du référentiel', function () {
+    var essai = REF.indicateurs.find(function (i) { return i.cle === 'essai'; });
+    assertEqual(App.data.links.promptLibrary, essai.paliers[0].lien);
+  });
+
+  test('Affichage : la salle montre la maturité IA moyenne et la moyenne des 3 indicateurs', function () {
+    var a = newRecord([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+    var b = newRecord([2, 2, 2, 2, 2, 2, 2, 2, 4, 4]);
+    var out = App.views.room({ status: 'ready', entries: [a, b] }, { isShared: false }).toString();
+    assert(out.indexOf('Maturité IA moyenne') >= 0, 'Maturité moyenne');
+    App.data.indicators.forEach(function (ind) {
+      assert(out.indexOf(App.ui.escapeHtml(ind.roomName)) >= 0, ind.key + ' : nom vue salle');
+    });
+    var meanGestion = Math.round((a.indicators.gestion + b.indicators.gestion) / 2);
+    assert(out.indexOf(meanGestion + ' %') >= 0, 'Moyenne de la gestion');
   });
 
   test('Affichage : chaque page a un titre principal unique', function () {
-    var record = App.storage.createRecord(App.scoring.computeResult(questions.map(function () { return 0; })));
-    allPages(record).forEach(function (page, i) {
+    allPages(newRecord()).forEach(function (page, i) {
       assertEqual((page.match(/<h1/g) || []).length, 1, 'Page ' + i);
     });
   });
@@ -329,8 +435,7 @@
   /* ---------- Images, inclusion, sécurité ---------- */
 
   test('Images : chaque photo a un texte alternatif et se charge', function () {
-    var record = App.storage.createRecord(App.scoring.computeResult(questions.map(function () { return 0; })));
-    allPages(record).forEach(function (page) {
+    allPages(newRecord()).forEach(function (page) {
       (page.match(/<img[^>]*>/g) || []).forEach(function (tag) {
         assert(/alt="[^"]+"/.test(tag), 'alt manquant : ' + tag);
       });
@@ -348,12 +453,8 @@
   test('Inclusion : les noms des profils s’affichent toujours sous les deux formes', function () {
     var p = App.data.getProfile('passeur');
     assertEqual(App.data.profileName(p), 'Le Passeur · La Passeuse');
-    var record = App.storage.createRecord(App.scoring.computeResult(questions.map(function () { return 0; })));
-    assert(App.views.result(record).toString().indexOf('Le Passeur · La Passeuse') >= 0, 'Portrait');
+    assert(App.views.result(newRecord()).toString().indexOf('Le Passeur · La Passeuse') >= 0, 'Portrait');
     assert(App.views.home().toString().indexOf('Le Passeur · La Passeuse') >= 0, 'Accueil');
-    App.data.profiles.forEach(function (pr) {
-      assert(pr.names.m && pr.names.f && pr.names.both, pr.id + ' : noms incomplets');
-    });
   });
 
   test('Inclusion : plus aucune question sur le genre', function () {
@@ -362,9 +463,16 @@
     assert(out.indexOf('Question 1/' + questions.length) >= 0, 'Le questionnaire commence à la question 1');
   });
 
+  test('Inclusion : textes des indicateurs sans masculin générique (D-19)', function () {
+    App.data.indicators.forEach(function (ind) {
+      ind.levels.forEach(function (l) {
+        assert(!/vos joueurs|Curieux|Explorateur/.test(l.libelle + ' ' + l.texte), ind.key + ' : ' + l.libelle);
+      });
+    });
+  });
+
   test('Sécurité : aucun style ni script écrit dans le HTML des pages (CSP stricte)', function () {
-    var record = App.storage.createRecord(App.scoring.computeResult(questions.map(function () { return 0; })));
-    allPages(record).forEach(function (page, i) {
+    allPages(newRecord()).forEach(function (page, i) {
       assert(!/\sstyle=/.test(page), 'Attribut style dans la page ' + i);
       assert(!/\son[a-z]+=/.test(page), 'Gestionnaire onclick… dans la page ' + i);
       assert(page.indexOf('<script') < 0, 'Script dans la page ' + i);
@@ -375,6 +483,7 @@
     var out = App.views.methode().toString();
     assertEqual((out.match(/<tr>/g) || []).length, 1 + 11, 'En-tête + 11 sources');
     assert(out.indexOf('Les limites') >= 0 && out.indexOf('La méthode') >= 0);
+    assert(out.indexOf('dimensions') < 0, 'Plus de mention des dimensions supprimées');
   });
 
   /* ---------- Navigation ---------- */
