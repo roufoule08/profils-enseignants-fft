@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tests — Colloque des Enseignants</title>
+  <style>
+    body { font: 15px/1.5 system-ui, sans-serif; margin: 24px; color: #18221d; }
+    h1 { margin: 0 0 4px; }
+    #summary { font-weight: 700; margin: 12px 0 20px; padding: 10px 14px; }
+    #summary.ok { background: #e3f4e8; color: #0b5b2a; }
+    #summary.ko { background: #fde8e4; color: #8a1f0a; }
+    li { margin: 4px 0; }
+    .pass::marker { content: '✔  '; color: #0b8a3e; }
+    .fail::marker { content: '✘  '; color: #c0260b; }
+    .fail { color: #8a1f0a; }
+    pre { margin: 4px 0 0; white-space: pre-wrap; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <h1>Tests automatiques</h1>
+  <p>Ouvrez cette page dans un navigateur : tout doit être vert.</p>
+  <div id="summary">Tests en cours…</div>
+  <ol id="results"></ol>
+
+  <script src="../assets/js/data/profiles.js"></script>
+  <script src="../assets/js/data/questions.js"></script>
+  <script src="../assets/js/data/axes.js"></script>
+  <script src="../assets/js/ui/html.js"></script>
+  <script src="../assets/js/core/scoring.js"></script>
+  <script src="../assets/js/core/storage.js"></script>
+  <script src="../assets/js/core/router.js"></script>
+  <script src="../assets/js/ui/views/home.js"></script>
+  <script src="../assets/js/ui/views/quiz.js"></script>
+  <script src="../assets/js/ui/views/result.js"></script>
+  <script src="../assets/js/ui/views/room.js"></script>
+
+  <script src="runner.js"></script>
+  <script src="legacy-scoring.js"></script>
+  <script src="app.test.js"></script>
+</body>
+</html>
