@@ -87,9 +87,9 @@
     App.data.iaLevels.forEach(function (l) { assert(l.name && l.message, 'Niveau IA incomplet'); });
   });
 
-  /* ---------- Calcul : identique à la première version ---------- */
+  /* ---------- Calcul : identique au calcul de référence ---------- */
 
-  test('Calcul : résultat identique à l’ancienne version sur 5 000 questionnaires aléatoires', function () {
+  test('Calcul : résultat identique au calcul de référence sur 5 000 questionnaires aléatoires', function () {
     var rand = seededRandom(42);
     for (var n = 0; n < 5000; n++) {
       var answers = randomAnswers(rand);
@@ -112,6 +112,20 @@
     }
   });
 
+  test('Calcul : le niveau IA vient de la question sur la fréquence d’usage', function () {
+    var freq = questions.findIndex(function (q) { return q.id === 'ia-frequence'; });
+    for (var level = 0; level < 5; level++) {
+      var answers = questions.map(function () { return 0; });
+      answers[freq] = level;
+      assertEqual(App.scoring.computeResult(answers).iaLevel, level, 'Fréquence ' + level);
+    }
+  });
+
+  test('Calcul : « Je n’ai jamais utilisé l’IA » ne rapporte aucun point', function () {
+    var usages = questions.find(function (q) { return q.id === 'ia-usages'; });
+    var jamais = usages.answers.find(function (a) { return a.id === 'jamais'; });
+    assert(jamais && !jamais.points, 'Aucun point attendu');
+  });
   test('Calcul : refuse un questionnaire incomplet ou invalide', function () {
     var incomplete = questions.map(function () { return 0; });
     incomplete[3] = null;

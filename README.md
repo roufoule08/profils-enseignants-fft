@@ -72,7 +72,8 @@ les femmes comme pour les hommes, un ton toujours valorisant et jamais critique.
    Si l'égalité persiste, c'est l'ordre des profils qui décide.
 3. Chaque axe (Terrain/Club, Repères/Exploration, Groupe/Individuel) est la moyenne
    des positions des profils, pondérée par leurs points.
-4. Le niveau IA est la moyenne arrondie des deux questions sur l'IA.
+4. Le niveau IA (0 à 4) correspond directement à la réponse à la question 9 (fréquence d'usage).
+   La question 10 (usage principal) ajoute +0,5 à deux profils, sauf « Je n'ai jamais utilisé l'IA ».
 
 ## Données et confidentialité
 

@@ -1,5 +1,22 @@
 # Journal des modifications
 
+## Mise à jour 4 : retours de la réunion sur le questionnaire
+
+- **Question 3** : les réponses sont recentrées sur le métier.
+  - « Apprendre en continu » devient « Faire évoluer mes méthodes en permanence ».
+  - « Apporter mon niveau de jeu et mon œil technique » devient « Apporter mon expertise technique et ma lecture du jeu ».
+- **Question 5** : « Testez un nouvel outil » devient « Testez un nouvel outil digital ou une nouvelle méthode pédagogique ».
+- **Question 7** :
+  - la question devient « Face à un nouvel outil digital, vous… » ;
+  - « Cherchez des preuves de son efficacité » devient « Cherchez des témoignages sur son efficacité ». Elle se distingue ainsi de « Mesurez ce qu'il vous apporte concrètement ».
+- **Question 10** : 6 nouvelles réponses d'usage, dont « Je n'ai jamais utilisé l'IA ».
+  - Chaque usage donne +0,5 aux deux profils dont il est le plus proche.
+  - « Jamais » ne donne aucun point.
+- **Niveau IA** : il vient désormais de la seule question 9, la fréquence d'usage, dont les 5 réponses
+  correspondent aux 5 niveaux. Les nouveaux usages de la question 10 ne se classent pas
+  du plus simple au plus avancé, ils ne servent donc plus au calcul du niveau.
+- 2 tests ont été ajoutés, pour un total de 31.
+
 ## Mise à jour 3 : portrait au féminin ou au masculin
 
 - Nouvel écran « Vous êtes… » avant la question 1, avec trois choix :

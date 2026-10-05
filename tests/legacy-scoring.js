@@ -1,7 +1,11 @@
 /**
- * Calcul de la première version du site, recopié à l'identique (seules
- * les variables globales ont été rendues locales).
- * Sert de référence : le nouveau calcul doit donner exactement le même portrait.
+ * Calcul de référence, écrit indépendamment du site avec les codes à une lettre
+ * du document de reprise. Le nouveau calcul doit donner exactement le même portrait.
+ *
+ * Base : calcul de la première version, recopié à l'identique, avec une seule
+ * évolution validée en réunion (mise à jour 4) sur la question 10 :
+ *   - 6 réponses d'usage, chacune +0,5 à deux profils (« jamais » : aucun point) ;
+ *   - le niveau IA vient de la seule question 9.
  */
 (function () {
   'use strict';
@@ -23,11 +27,10 @@
         Object.entries(x || {}).forEach(function (kv) { sc[kv[0]] += kv[1]; });
       }
       if (i === 9) {
-        if (a === 2) sc.E += .5;
-        if (a === 3) { sc.P += .5; sc.C += .5; }
-        if (a === 4) { sc.C += .5; sc.B += .5; }
+        var bonus = [{ P: .5, C: .5 }, { E: .5, S: .5 }, { P: .5, J: .5 }, { J: .5, C: .5 }, { B: .5, E: .5 }, {}][a];
+        Object.entries(bonus).forEach(function (kv) { sc[kv[0]] += kv[1]; });
       }
-      if (i >= 8) lv.push(a);
+      if (i === 8) lv.push(a);
     });
     var dep = S.a[2] != null ? C[S.a[2]] : null;
     var o = C.slice().sort(function (a, b) {

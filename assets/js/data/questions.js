@@ -52,10 +52,10 @@
       tiebreaker: true,
       answers: [
         { label: 'Savoir expliquer et faire progresser', points: { passeur: 1 } },
-        { label: 'Apporter mon niveau de jeu et mon œil technique', points: { coach: 1 } },
+        { label: 'Apporter mon expertise technique et ma lecture du jeu', points: { coach: 1 } },
         { label: 'Organiser et coordonner', points: { batisseur: 1 } },
         { label: 'Fidéliser mes élèves', points: { entrepreneur: 1 } },
-        { label: 'Apprendre en continu', points: { 'jeune-pro': 1 } },
+        { label: 'Faire évoluer mes méthodes en permanence', points: { 'jeune-pro': 1 } },
         { label: 'M’appuyer sur mon expérience', points: { sage: 1 } }
       ]
     },
@@ -79,7 +79,7 @@
         { label: 'Analysez des vidéos de matchs', points: { coach: 1 } },
         { label: 'Avancez un projet du club', points: { batisseur: 1 } },
         { label: 'Préparez un nouveau stage ou un nouveau cours', points: { entrepreneur: 1 } },
-        { label: 'Testez un nouvel outil', points: { 'jeune-pro': 1 } },
+        { label: 'Testez un nouvel outil digital ou une nouvelle méthode pédagogique', points: { 'jeune-pro': 1 } },
         { label: 'Partagez votre expérience avec de jeunes collègues', points: { sage: 1 } }
       ]
     },
@@ -95,10 +95,10 @@
     },
     {
       id: 'nouvel-outil',
-      text: 'Face à un nouvel outil, vous…',
+      text: 'Face à un nouvel outil digital, vous…',
       answers: [
         { label: 'Testez vous-même pour les élèves', points: { passeur: 1 } },
-        { label: 'Cherchez des preuves de son efficacité', points: { coach: 1 } },
+        { label: 'Cherchez des témoignages sur son efficacité', points: { coach: 1 } },
         { label: 'Regardez comment le collectif réagit', points: { batisseur: 1 } },
         { label: 'Mesurez ce qu’il vous apporte concrètement', points: { entrepreneur: 1 } },
         { label: 'Foncez et l’essayez tout de suite', points: { 'jeune-pro': 1 } },
@@ -119,6 +119,7 @@
     },
     {
       // Question clé pour l'analyse : fréquence d'usage, du jamais au quotidien.
+      // Elle donne à elle seule le niveau IA du portrait (0 à 4).
       id: 'ia-frequence',
       text: 'À quelle fréquence utilisez-vous l’IA (ChatGPT, Copilot, Gemini…) ?',
       answers: [
@@ -130,15 +131,19 @@
       ]
     },
     {
-      // Question clé pour l'analyse : usage principal, du plus simple au plus avancé.
+      // Question clé pour l'analyse : usage principal de l'IA.
+      // Pas de niveau IA ici : les usages ne sont pas plus ou moins « avancés »
+      // les uns que les autres. Le niveau IA vient de la question précédente.
+      // Chaque usage donne +0,5 aux deux profils dont il est le plus proche.
       id: 'ia-usages',
       text: 'Pour quel usage principal l’avez-vous déjà utilisée ?',
       answers: [
-        { label: 'Pas encore utilisée pour l’instant', iaLevel: 0 },
-        { label: 'Poser des questions générales', iaLevel: 1 },
-        { label: 'Faciliter la communication dans le club', iaLevel: 2, points: { entrepreneur: 0.5 } },
-        { label: 'Mettre en place des séances ou des plans d’action', iaLevel: 3, points: { passeur: 0.5, coach: 0.5 } },
-        { label: 'Analyser des données ou automatiser une tâche', iaLevel: 4, points: { coach: 0.5, batisseur: 0.5 } }
+        { id: 'seances', label: 'Préparer ou enrichir des séances d’entraînement', points: { passeur: 0.5, coach: 0.5 } },
+        { id: 'redaction', label: 'Rédiger des e-mails, messages ou documents', points: { entrepreneur: 0.5, sage: 0.5 } },
+        { id: 'exercices', label: 'Créer des exercices ou trouver des idées d’animation', points: { passeur: 0.5, 'jeune-pro': 0.5 } },
+        { id: 'recherche', label: 'Rechercher des informations ou des ressources pédagogiques', points: { 'jeune-pro': 0.5, coach: 0.5 } },
+        { id: 'organisation', label: 'Organiser la vie du club (événements, planning, inscriptions…)', points: { batisseur: 0.5, entrepreneur: 0.5 } },
+        { id: 'jamais', label: 'Je n’ai jamais utilisé l’IA' }
       ]
     }
   ]);
