@@ -1,1 +1,0 @@
-Version mobile-first. Remplacer index.html. Les photos sont intégrées directement. La salle reste prête pour le branchement à une base partagée lors de l’hébergement.
