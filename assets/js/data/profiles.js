@@ -14,6 +14,9 @@
  *   names     : nom du profil au masculin (m), au féminin (f) et sous les deux formes (both)
  *   strengths : 3 points forts
  *   pistes    : 3 pistes concrètes où l'IA facilite le travail { title, text }
+ *   useCase   : cas d'usage de la bibliothèque de prompts qui correspond au prompt
+ *               { id, title, libraryPage : ancre de la page du profil dans la bibliothèque }
+ *               (relevé dans la bibliothèque le 5 octobre 2026, DECISIONS.md D-22)
  *   prompt    : consigne prête à copier pour un premier essai
  *   statsIntro: phrase qui relie les chiffres au profil
  *   stats     : repères chiffrés issus des études { value, label, source }
@@ -49,6 +52,7 @@
           text: 'Notez quelques mots après la séance : l’IA les transforme en suivi clair et lisible, prêt à partager avec l’enfant et sa famille.'
         }
       ],
+      useCase: { id: 'SEA-01', title: 'Préparer une séance d’école de tennis', libraryPage: 'p-passeur' },
       prompt: 'Prépare une séance d’une heure pour 8 enfants de 7-8 ans, niveau orange, objectif : le service. Propose 3 exercices ludiques et une variante pour les plus avancés.',
       statsIntro: 'Votre profil est au cœur du métier : faire progresser les plus jeunes est le quotidien de la grande majorité de la profession.',
       stats: [
@@ -80,6 +84,7 @@
           text: 'Tournois, périodes de travail, récupération : l’IA vous aide à bâtir un calendrier cohérent et à le réajuster quand le programme change.'
         }
       ],
+      useCase: { id: 'COM-01', title: 'Tirer 3 axes de travail d’un match', libraryPage: 'p-coach-de-competition' },
       prompt: 'Voici mes notes sur le dernier match de mon élève de 15 ans : […]. Identifie 3 axes de travail et propose un cycle de 4 semaines.',
       statsIntro: 'La compétition fait partie du quotidien d’une grande partie de la profession, et vos envies de formation sont largement partagées.',
       stats: [
@@ -110,6 +115,7 @@
           text: 'Plannings des courts, répartition des groupes, tableau de bord mensuel : l’IA vous aide à les construire et à les mettre à jour plus vite.'
         }
       ],
+      useCase: { id: 'CLU-02', title: 'Rédiger la partie projet d’une demande de subvention', libraryPage: 'p-batisseur' },
       prompt: 'À partir de ces chiffres d’effectifs : […], rédige en une page la partie « projet sportif » du dossier de subvention municipale.',
       statsIntro: 'Coordonner les projets et faire le lien avec la fédération sont des rôles reconnus et recherchés dans les clubs.',
       stats: [
@@ -140,6 +146,7 @@
           text: 'Listez vos créneaux et vos contraintes : l’IA vous aide à comparer plusieurs organisations possibles de votre semaine.'
         }
       ],
+      useCase: { id: 'OFF-01', title: 'Créer une offre de stage de vacances', libraryPage: 'p-entrepreneur' },
       prompt: 'Propose 3 stages de vacances pour adultes débutants, avec pour chacun un texte d’annonce court et un message à envoyer aux membres du club.',
       statsIntro: 'Votre façon de travailler, entre plusieurs structures et une activité indépendante, est celle d’une large part de la profession.',
       stats: [
@@ -171,6 +178,7 @@
           text: 'Entraînez-vous à répondre à un parent mécontent ou à gérer un groupe agité : l’IA joue le rôle, vous testez vos réponses en toute tranquillité.'
         }
       ],
+      useCase: { id: 'FOR-02', title: 'S’entraîner à une situation difficile', libraryPage: 'p-jeune-pro' },
       prompt: 'Joue le rôle d’un parent mécontent que son enfant ne passe pas en groupe compétition. Je m’entraîne à lui répondre.',
       statsIntro: 'Vous faites partie d’une génération nombreuse, qui se forme activement.',
       stats: [
@@ -201,6 +209,7 @@
           text: 'Transformez votre expérience en supports simples pour les jeunes collègues : fiches de séance, conseils, repères de progression.'
         }
       ],
+      useCase: { id: 'FOR-03', title: 'Mettre sa progression pédagogique au propre', libraryPage: 'p-sage' },
       prompt: 'Je te dicte ma progression pour enseigner le revers à une main : […]. Mets-la au propre en une fiche d’une page pour mes jeunes collègues.',
       statsIntro: 'Votre expérience est une ressource précieuse pour le club : près d’un quart de la profession a 51 ans et plus.',
       stats: [

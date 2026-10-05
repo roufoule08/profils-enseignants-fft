@@ -390,6 +390,9 @@ img { max-width: 100%; }
 
 .prompt { font-weight: 700; color: var(--color-ball); font-size: 18px; }
 
+.use-case { margin: 0 0 8px; font-size: 14px; }
+.use-case strong { color: #fff; }
+
 .panel-note { font-size: 13px; opacity: .8; margin-bottom: 0; }
 
 .btn-light { background: #fff; color: var(--color-green); }

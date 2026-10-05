@@ -173,6 +173,18 @@
     });
   });
 
+  test('Contenu : chaque profil propose un cas d’usage de la bibliothèque (DECISIONS.md D-22)', function () {
+    var ids = [];
+    App.data.profiles.forEach(function (p) {
+      assert(p.useCase, p.id + ' : cas d’usage manquant');
+      assert(/^[A-Z]{3}-\d{2}$/.test(p.useCase.id), p.id + ' : identifiant de cas d’usage invalide');
+      assert(p.useCase.title, p.id + ' : titre du cas d’usage');
+      assert(/^p-[a-z-]+$/.test(p.useCase.libraryPage), p.id + ' : page du profil dans la bibliothèque');
+      ids.push(p.useCase.id);
+    });
+    assertEqual(new Set(ids).size, ids.length, 'Un cas d’usage différent par profil');
+  });
+
   test('Contenu : chaque question et chaque réponse a un texte', function () {
     questions.forEach(function (q) {
       assert(q.text && q.text.trim(), 'Question sans texte : ' + q.id);
@@ -395,7 +407,8 @@
     assertEqual((out.match(/class="piste"/g) || []).length, 3, 'Pistes');
     assert(out.indexOf('Votre cas d’usage pour démarrer') >= 0, 'Titre du cas d’usage');
     assert(out.indexOf('data-action="copy-prompt"') >= 0, 'Bouton copier');
-    assert(out.indexOf('href="' + App.data.links.promptLibrary + '"') >= 0, 'Lien vers la bibliothèque');
+    assert(out.indexOf(p.useCase.id) >= 0 && out.indexOf(App.ui.escapeHtml(p.useCase.title)) >= 0, 'Cas d’usage de la bibliothèque');
+    assert(out.indexOf('href="' + App.data.links.promptLibrary + '#' + p.useCase.libraryPage + '"') >= 0, 'Lien vers la page du profil dans la bibliothèque');
     assert(out.indexOf(App.ui.escapeHtml(p.statsIntro)) >= 0, 'Phrase de lien avec le profil');
     assert(out.indexOf(App.ui.escapeHtml(p.stats[0].source)) >= 0, 'Source des chiffres');
     assert(out.indexOf('href="#methode"') >= 0, 'Lien vers Sources et méthode');

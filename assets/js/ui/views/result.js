@@ -53,11 +53,16 @@
       </li>`;
   }
 
-  /** Lien vers la bibliothèque de prompts, affiché seulement quand l'adresse est connue. */
-  function libraryLink() {
-    var url = App.data.links.promptLibrary;
-    if (!url) return '';
-    return html`<a class="text-link" href="${url}" target="_blank" rel="noopener">Voir d’autres cas d’usage dans la bibliothèque de prompts →</a>`;
+  /**
+   * Lien vers la page du profil dans la bibliothèque de prompts, où figure le
+   * cas d'usage proposé. La bibliothèque n'a pas d'adresse directe par cas
+   * d'usage : on ouvre la liste des cas d'usage du profil (DECISIONS.md D-22).
+   */
+  function libraryLink(profile) {
+    var base = App.data.links.promptLibrary;
+    if (!base) return '';
+    var url = profile.useCase ? base + '#' + profile.useCase.libraryPage : base;
+    return html`<a class="text-link" href="${url}" target="_blank" rel="noopener">Voir les cas d’usage pour mon profil →</a>`;
   }
 
   /** @param {Object|null} result portrait enregistré (voir core/storage.js) */
@@ -109,11 +114,12 @@
 
               <section class="panel action">
                 <h2>Votre cas d’usage pour démarrer</h2>
+                ${p.useCase ? html`<p class="use-case">Cas d’usage ${p.useCase.id} de la bibliothèque : <strong>${p.useCase.title}</strong></p>` : ''}
                 <p class="prompt" id="prompt-text">${p.prompt}</p>
                 <button type="button" class="btn btn-light" data-action="copy-prompt">Copier le prompt</button>
                 <span class="copy-status" role="status" aria-live="polite"></span>
                 <p class="panel-note">Collez-le dans ChatGPT, Copilot ou Gemini, puis complétez les passages entre crochets […].</p>
-                ${libraryLink()}
+                ${libraryLink(p)}
               </section>
 
               <section class="panel wide">

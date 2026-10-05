@@ -1,5 +1,14 @@
 # Journal des modifications
 
+## Mise à jour 7 : un vrai cas d'usage de la bibliothèque pour chaque profil
+
+- « Votre cas d'usage pour démarrer » affiche le cas d'usage de la bibliothèque de prompts qui correspond au profil,
+  par exemple « Cas d'usage COM-01 de la bibliothèque : Tirer 3 axes de travail d'un match ».
+- Le bouton « Copier le prompt » est conservé.
+- Le lien « Voir les cas d'usage pour mon profil → » ouvre la page du profil dans la bibliothèque, où figure ce cas d'usage.
+- Les correspondances sont tracées dans DECISIONS.md (D-22).
+- 1 test a été ajouté, pour un total de 44.
+
 ## Mise à jour 6 : les 3 indicateurs du référentiel v3
 
 - **Référentiel v3 intégré** : `referentiel/referentiel-profils-v3.json`. Le site le lit via
