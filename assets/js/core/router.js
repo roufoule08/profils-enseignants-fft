@@ -1,5 +1,5 @@
 /**
- * Navigation par l'adresse (#home, #quiz, #result, #room).
+ * Navigation par l'adresse (#home, #quiz, #result, #room, #methode).
  *
  * Gère les boutons précédent / suivant du navigateur et les liens partagés.
  * Une adresse inconnue renvoie vers l'accueil.
@@ -7,7 +7,7 @@
 (function (App) {
   'use strict';
 
-  var ROUTES = Object.freeze(['home', 'quiz', 'result', 'room']);
+  var ROUTES = Object.freeze(['home', 'quiz', 'result', 'room', 'methode']);
   var DEFAULT_ROUTE = 'home';
 
   function parse(hash) {

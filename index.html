@@ -4,14 +4,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Colloque des Enseignants</title>
-  <meta name="description" content="Quel profil tennis êtes-vous ? Un questionnaire ludique pour les enseignants de tennis.">
+  <meta name="description" content="Quel profil enseignant êtes-vous ? Un questionnaire ludique pour les enseignantes et enseignants de tennis.">
+  <!-- Pas de référencement tant que le site n'est pas validé (CLAUDE.md §6). -->
+  <meta name="robots" content="noindex, nofollow">
   <meta name="theme-color" content="#003c2e">
 
+  <!-- Seul service tiers : Google Fonts. [À VALIDER : héberger les polices sur le site, voir DECISIONS.md] -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Roboto+Flex:wght@400;600;700&display=swap">
   <link rel="stylesheet" href="assets/css/styles.css">
-  <link rel="preload" as="image" href="assets/img/profils/passeur.jpg">
 </head>
 <body>
   <a class="skip-link" href="#app">Aller au contenu</a>
@@ -26,18 +28,25 @@
   </header>
 
   <main id="app" tabindex="-1">
-    <noscript><p style="padding:24px">Ce site nécessite JavaScript pour fonctionner.</p></noscript>
+    <noscript><p class="noscript">Ce site nécessite JavaScript pour fonctionner.</p></noscript>
   </main>
 
   <footer class="footer">
-    Outil ludique d’animation, appuyé sur des études : ce n’est ni un test psychométrique ni une évaluation professionnelle.<br>
-    Les joueurs et joueuses cités illustrent des traits publics ; aucune citation ne leur est attribuée.
+    <p>Outil ludique d’animation, appuyé sur des études : ce n’est ni un test psychométrique ni une évaluation professionnelle.<br>
+    Les joueurs et joueuses cités illustrent des traits publics ; aucune citation ne leur est attribuée.</p>
+    <p class="footer-links">
+      <a href="#methode">Sources et méthode</a>
+      <a href="https://www.fft.fr/mention-legales-et-cgu" target="_blank" rel="noopener">Mentions légales FFT</a>
+      <a href="https://www.fft.fr/politique-de-confidentialite" target="_blank" rel="noopener">Politique de confidentialité</a>
+    </p>
   </footer>
 
   <!-- L'ordre compte : données, puis outils, puis pages, puis l'application. -->
   <script src="assets/js/data/profiles.js" defer></script>
   <script src="assets/js/data/questions.js" defer></script>
   <script src="assets/js/data/axes.js" defer></script>
+  <script src="assets/js/data/links.js" defer></script>
+  <script src="assets/js/data/methode.js" defer></script>
   <script src="assets/js/ui/html.js" defer></script>
   <script src="assets/js/core/scoring.js" defer></script>
   <script src="assets/js/core/storage.js" defer></script>
@@ -46,6 +55,7 @@
   <script src="assets/js/ui/views/quiz.js" defer></script>
   <script src="assets/js/ui/views/result.js" defer></script>
   <script src="assets/js/ui/views/room.js" defer></script>
+  <script src="assets/js/ui/views/methode.js" defer></script>
   <script src="assets/js/app.js" defer></script>
 </body>
 </html>

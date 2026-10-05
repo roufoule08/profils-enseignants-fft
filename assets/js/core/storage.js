@@ -7,8 +7,8 @@
  * `roomStore` expose une interface asynchrone ({ list, add }) pour pouvoir
  * être remplacé par une base de données partagée sans toucher au reste du site.
  *
- * Le choix « Vous êtes… » (gender) n'est gardé que dans le portrait de l'appareil :
- * il n'est jamais copié dans « La salle » (voir toRoomEntry).
+ * Aucune donnée personnelle n'est enregistrée. Le champ gender d'une version
+ * précédente (choix « Vous êtes… », retiré) est effacé à la première lecture.
  *
  * Toutes les données lues sont validées : une donnée corrompue ou obsolète
  * est ignorée au lieu de faire planter la page.
@@ -71,8 +71,7 @@
   }
 
   function isValidResult(r) {
-    return hasValidCore(r) && typeof r.id === 'string' && typeof r.code === 'string' &&
-      (r.gender == null || App.data.GENDERS.indexOf(r.gender) >= 0);
+    return hasValidCore(r) && typeof r.id === 'string' && typeof r.code === 'string';
   }
 
   function isValidRoomEntry(e) {
@@ -143,7 +142,12 @@
 
   function loadResult() {
     var r = readJson(KEYS.result);
-    return isValidResult(r) ? r : null;
+    if (!isValidResult(r)) return null;
+    if ('gender' in r) {
+      delete r.gender;
+      writeJson(KEYS.result, r);
+    }
+    return r;
   }
 
   function saveResult(record) {

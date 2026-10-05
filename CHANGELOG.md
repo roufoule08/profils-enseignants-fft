@@ -1,5 +1,32 @@
 # Journal des modifications
 
+## Mise à jour 5 : conformité (audit du 5 octobre 2026) et retours de la cheffe de projet
+
+Chaque écart au référentiel est tracé dans `DECISIONS.md`. Les règles de travail sont dans `CLAUDE.md`.
+
+### Sécurité et conformité
+- **Photos conservées, à la demande du porteur du projet.** Une étiquette de famille est ajoutée sur chaque carte et dans le portrait (Sur le court, Autour du court, Trajectoires). Le risque lié aux droits à l'image, signalé par l'audit, est tracé dans D-10, en attente d'arbitrage.
+- **TICKET-06, plus de question sur le genre** : l'écran « Vous êtes… » est retiré. Les noms s'affichent toujours sous les deux formes, et le genre déjà enregistré sur les téléphones est effacé. (D-09)
+- **TICKET-07, en partie** :
+  - balise `noindex` ;
+  - liens vers les mentions légales et la politique de confidentialité FFT ;
+  - plus aucun style écrit dans le HTML, pour être compatible avec une CSP stricte.
+- Les seuils 60/40 et les textes d'interprétation des axes, inventés, sont supprimés. (Audit, écart n° 2)
+- La devise complète du Sage est rétablie. Les forces sont alignées sur le référentiel. (D-11, D-12)
+
+### Portrait (retours de la cheffe de projet)
+- Le bloc « Votre rapport à l'IA » est supprimé, car il répétait la réponse à la question 9. Le niveau reste affiché dans l'en-tête.
+- « Votre prompt pour démarrer » devient « Votre cas d'usage pour démarrer ». Le bouton « Copier le prompt » est conservé. Le lien vers la bibliothèque s'affichera dès que son adresse sera connue.
+- « Repères chiffrés » devient « Pourquoi ce profil vous ressemble » : une phrase relie les chiffres au profil.
+- Nouvelle page **Sources et méthode** : les 11 sources, la méthode de calcul et les limites, avec des liens depuis le portrait et le pied de page.
+
+### Pas encore fait (en attente)
+- Les 3 indicateurs v3 (gestion, envie d'essayer, temps à gagner) attendent `referentiel-profils-v3.json`. (D-18)
+- La vue salle partagée attend le choix entre l'import Microsoft Forms et un service FFT, à faire avec la DSI.
+- Les polices sont toujours chargées depuis Google Fonts, en attendant l'autorisation de les télécharger.
+
+6 tests ont été ajoutés ou remplacés, pour un total de 35. L'exemple chiffré de la documentation de reprise en fait partie.
+
 ## Mise à jour 4 : retours de la réunion sur le questionnaire
 
 - **Question 3** : les réponses sont recentrées sur le métier.

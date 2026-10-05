@@ -9,10 +9,13 @@
  * un remplacement du savoir-faire de l'enseignant ou de l'enseignante.
  *
  * Champs :
+ *   family    : famille du profil (voir App.data.families)
+ *   image     : photo du joueur ou de la joueuse miroir [À VALIDER : droits à l'image, voir DECISIONS.md D-10]
  *   names     : nom du profil au masculin (m), au féminin (f) et sous les deux formes (both)
  *   strengths : 3 points forts
  *   pistes    : 3 pistes concrètes où l'IA facilite le travail { title, text }
  *   prompt    : consigne prête à copier pour un premier essai
+ *   statsIntro: phrase qui relie les chiffres au profil
  *   stats     : repères chiffrés issus des études { value, label, source }
  *   axes      : position du profil sur chaque axe, de -1 à +1
  *               (-1 = Terrain / Repères / Groupe, +1 = Club / Exploration / Individuel)
@@ -27,12 +30,13 @@
   App.data.profiles = Object.freeze([
     {
       id: 'passeur',
+      family: 'court',
       names: { m: 'Le Passeur', f: 'La Passeuse', both: 'Le Passeur · La Passeuse' },
       player: 'Yannick Noah',
       image: 'assets/img/profils/passeur.jpg',
       quote: 'Ma fierté, c’est de les voir progresser.',
       intro: 'Vous placez la progression des élèves et la relation pédagogique au cœur de votre métier.',
-      strengths: ['Pédagogie et patience', 'Animation de groupe', 'Lien de confiance avec les familles'],
+      strengths: ['Pédagogie et patience', 'Sens du jeu et de l’animation', 'Lien de confiance avec les familles'],
       pistes: [
         {
           title: 'Adapter une séance à chaque niveau',
@@ -48,6 +52,7 @@
         }
       ],
       prompt: 'Prépare une séance d’une heure pour 8 enfants de 7-8 ans, niveau orange, objectif : le service. Propose 3 exercices ludiques et une variante pour les plus avancés.',
+      statsIntro: 'Votre profil est au cœur du métier : faire progresser les plus jeunes est le quotidien de la grande majorité de la profession.',
       stats: [
         { value: '87 %', label: 'des personnes interrogées encadrent l’école de tennis', source: NA_2024 },
         { value: '68 %', label: 'encadrent le mini-tennis', source: NA_2024 },
@@ -57,12 +62,13 @@
     },
     {
       id: 'coach',
+      family: 'court',
       names: { m: 'Le Coach de compétition', f: 'La Coach de compétition', both: 'Le ou la Coach de compétition' },
       player: 'Novak Djokovic',
       image: 'assets/img/profils/coach.jpg',
       quote: 'Sur le court, c’est le résultat qui parle.',
       intro: 'Vous aimez transformer l’observation en progression mesurable, avec des repères précis.',
-      strengths: ['Expertise technique et tactique', 'Sens de la performance', 'Regard technique affûté'],
+      strengths: ['Expertise technique et tactique', 'Exigence et sens de la performance', 'Crédibilité sportive'],
       pistes: [
         {
           title: 'Individualiser les plans d’entraînement',
@@ -78,6 +84,7 @@
         }
       ],
       prompt: 'Voici mes notes sur le dernier match de mon élève de 15 ans : […]. Identifie 3 axes de travail et propose un cycle de 4 semaines.',
+      statsIntro: 'La compétition fait partie du quotidien d’une grande partie de la profession, et vos envies de formation sont largement partagées.',
       stats: [
         { value: '55 %', label: 'des personnes interrogées encadrent un centre d’entraînement jeunes', source: NA_2024 },
         { value: '19,5 %', label: 'souhaitent se former à la préparation mentale, 16,6 % à la préparation physique', source: NA_2024 }
@@ -86,12 +93,13 @@
     },
     {
       id: 'batisseur',
+      family: 'club',
       names: { m: 'Le Bâtisseur', f: 'La Bâtisseuse', both: 'Le Bâtisseur · La Bâtisseuse' },
       player: 'Amélie Mauresmo',
       image: 'assets/img/profils/batisseur.jpg',
       quote: 'Je fais tourner le club.',
       intro: 'Vous reliez le terrain, l’équipe et le projet de club pour faire avancer le collectif.',
-      strengths: ['Vision d’ensemble', 'Coordination d’équipe', 'Relais entre bénévoles, fédération et collectivité'],
+      strengths: ['Vision d’ensemble', 'Organisation et coordination d’équipe', 'Relais entre bénévoles, fédération et collectivité'],
       pistes: [
         {
           title: 'Alléger les dossiers de subvention',
@@ -107,6 +115,7 @@
         }
       ],
       prompt: 'À partir de ces chiffres d’effectifs : […], rédige en une page la partie « projet sportif » du dossier de subvention municipale.',
+      statsIntro: 'Coordonner les projets et faire le lien avec la fédération sont des rôles reconnus et recherchés dans les clubs.',
       stats: [
         { value: '12 clubs', label: 'étudiés : coordonner les projets et faire le lien avec la fédération y sont des rôles clés', source: 'Rundstadler, 2025' },
         { value: '9 %', label: 'des personnes interrogées sont titulaires du DESJEPS', source: NA_2024 }
@@ -115,6 +124,7 @@
     },
     {
       id: 'entrepreneur',
+      family: 'club',
       names: { m: 'L’Entrepreneur', f: 'L’Entrepreneuse', both: 'L’Entrepreneur · L’Entrepreneuse' },
       player: 'Serena Williams',
       image: 'assets/img/profils/entrepreneur.jpg',
@@ -136,6 +146,7 @@
         }
       ],
       prompt: 'Propose 3 stages de vacances pour adultes débutants, avec pour chacun un texte d’annonce court et un message à envoyer aux membres du club.',
+      statsIntro: 'Votre façon de travailler, entre plusieurs structures et une activité indépendante, est celle d’une large part de la profession.',
       stats: [
         { value: '45 %', label: 'des personnes interrogées ont une part d’activité libérale', source: NA_2024 },
         { value: '26 %', label: 'travaillent dans plusieurs structures', source: NA_2024 },
@@ -145,6 +156,7 @@
     },
     {
       id: 'jeune-pro',
+      family: 'traj',
       names: { m: 'Le Jeune Pro', f: 'La Jeune Pro', both: 'Le ou la Jeune Pro' },
       player: 'Carlos Alcaraz',
       image: 'assets/img/profils/jeune-pro.jpg',
@@ -166,6 +178,7 @@
         }
       ],
       prompt: 'Joue le rôle d’un parent mécontent que son enfant ne passe pas en groupe compétition. Je m’entraîne à lui répondre.',
+      statsIntro: 'Vous faites partie d’une génération nombreuse, qui se forme activement.',
       stats: [
         { value: '30 %', label: 'des personnes interrogées ont entre 18 et 30 ans', source: NA_2024 },
         { value: '69 %', label: 'des 18-30 ans ont un projet de formation diplômante', source: NA_2024 }
@@ -174,10 +187,11 @@
     },
     {
       id: 'sage',
+      family: 'traj',
       names: { m: 'Le Sage', f: 'La Sage', both: 'Le ou la Sage' },
       player: 'Roger Federer',
       image: 'assets/img/profils/sage.jpg',
-      quote: 'Montrez-moi que ça marche.',
+      quote: 'J’ai tout vu passer. Montrez-moi que ça marche.',
       intro: 'Vous vous appuyez sur l’expérience et retenez les nouveautés qui apportent une vraie valeur.',
       strengths: ['Expérience et recul', 'Fidélité des membres du club', 'Transmission aux jeunes collègues'],
       pistes: [
@@ -195,6 +209,7 @@
         }
       ],
       prompt: 'Je te dicte ma progression pour enseigner le revers à une main : […]. Mets-la au propre en une fiche d’une page pour mes jeunes collègues.',
+      statsIntro: 'Votre expérience est une ressource précieuse pour le club : près d’un quart de la profession a 51 ans et plus.',
       stats: [
         { value: '24 %', label: 'des personnes interrogées ont 51 ans et plus', source: NA_2024 },
         { label: 'Avec l’expérience, on apprend d’abord par la pratique, sur le terrain', source: 'Cortela et al., 2022 ; Anderson et al., 2021' }
@@ -208,16 +223,22 @@
     return App.data.profiles.find(function (p) { return p.id === id; });
   };
 
-  /** Valeurs possibles du choix fait avant le questionnaire. */
-  App.data.GENDERS = Object.freeze(['f', 'm', 'n']);
+  /**
+   * Les 3 familles de profils (documentation de reprise, « Les 3 familles »).
+   * La couleur reprend la surface de court associée à chaque famille.
+   */
+  App.data.families = Object.freeze({
+    court: { name: 'Sur le court', surface: 'Terre battue' },
+    club: { name: 'Autour du court', surface: 'Surface dure' },
+    traj: { name: 'Trajectoires', surface: 'Gazon' }
+  });
 
   /**
-   * Nom du profil accordé : 'f' = féminin, 'm' = masculin,
-   * autre valeur (dont 'n', « ne pas préciser ») = les deux formes.
+   * Nom affiché du profil : toujours les deux formes (« Le Passeur · La Passeuse »),
+   * pour que chacune et chacun s'y reconnaisse sans qu'on demande le genre
+   * (aucune donnée nouvelle : voir DECISIONS.md, D-09).
    */
-  App.data.profileName = function (profile, gender) {
-    if (gender === 'f') return profile.names.f;
-    if (gender === 'm') return profile.names.m;
+  App.data.profileName = function (profile) {
     return profile.names.both;
   };
 })(window.App = window.App || {});

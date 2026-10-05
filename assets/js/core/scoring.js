@@ -114,24 +114,8 @@
     };
   }
 
-  /**
-   * Phrases d'interprétation des axes, dans l'ordre de data/axes.js.
-   * @param {Object} axisScores ex. { terrainClub: 72, ... }
-   * @returns {string[]}
-   */
-  function interpretAxes(axisScores) {
-    var t = data.axisThresholds;
-    return data.axes.map(function (axis) {
-      var value = axisScores[axis.key];
-      if (value >= t.strongLeft) return axis.texts.left;
-      if (value <= t.strongRight) return axis.texts.right;
-      return axis.texts.balanced;
-    });
-  }
-
   App.scoring = {
     isComplete: isComplete,
-    computeResult: computeResult,
-    interpretAxes: interpretAxes
+    computeResult: computeResult
   };
 })(window.App = window.App || {});

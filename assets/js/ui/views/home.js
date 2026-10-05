@@ -5,12 +5,14 @@
   var html = App.ui.html;
 
   function profileCard(p) {
-    var name = App.data.profileName(p, 'n');
+    var name = App.data.profileName(p);
+    var family = App.data.families[p.family];
     return html`
-      <article class="story">
+      <article class="story fam-${p.family}">
         <img src="${p.image}" alt="Illustration du profil ${name}, esprit ${p.player}"
              loading="lazy" decoding="async">
         <div class="story-copy">
+          <div class="family-tag">${family.name}</div>
           <h3>${name}</h3>
           <b>Esprit ${p.player}</b>
           <p>${p.intro}</p>

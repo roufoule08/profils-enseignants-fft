@@ -15,6 +15,7 @@
       </section>`;
   }
 
+  /** Barre d'un axe : pôle dominant et son pourcentage (documentation de reprise, étape 3). */
   function axisBar(axis, value) {
     var leftWins = value >= 50;
     return html`
@@ -23,7 +24,7 @@
           <span>${axis.label}</span>
           <b>${leftWins ? axis.left : axis.right} ${leftWins ? value : 100 - value} %</b>
         </div>
-        <div class="track" aria-hidden="true"><i style="width:${value}%"></i></div>
+        <div class="track" aria-hidden="true"><i data-pct="${value}"></i></div>
       </div>`;
   }
 
@@ -38,17 +39,6 @@
       </li>`;
   }
 
-  /** Échelle en 5 cases : les cases jusqu'au niveau atteint sont pleines. */
-  function iaScale(level) {
-    var levels = App.data.iaLevels;
-    return html`
-      <ol class="ia-scale" aria-label="Niveau ${level + 1} sur ${levels.length}">
-        ${levels.map(function (l, i) {
-          return html`<li class="${i <= level ? 'on' : ''}${i === level ? ' current' : ''}">${l.name}</li>`;
-        })}
-      </ol>`;
-  }
-
   function statCard(stat) {
     return html`
       <li class="stat${stat.value ? '' : ' stat-quote'}">
@@ -56,6 +46,13 @@
         <span class="stat-label">${stat.label}</span>
         <small class="stat-source">${stat.source}</small>
       </li>`;
+  }
+
+  /** Lien vers la bibliothèque de prompts, affiché seulement quand l'adresse est connue. */
+  function libraryLink() {
+    var url = App.data.links.promptLibrary;
+    if (!url) return '';
+    return html`<a class="text-link" href="${url}" target="_blank" rel="noopener">Voir d’autres cas d’usage dans la bibliothèque de prompts →</a>`;
   }
 
   /** @param {Object|null} result portrait enregistré (voir core/storage.js) */
@@ -66,9 +63,8 @@
     if (!p || !s) return emptyState();
 
     var ia = App.data.iaLevels[result.iaLevel];
-    var name = App.data.profileName(p, result.gender);
-    var secondaryName = App.data.profileName(s, result.gender);
-    var interpretation = App.scoring.interpretAxes(result.axes);
+    var name = App.data.profileName(p);
+    var family = App.data.families[p.family];
 
     return html`
       <section class="page">
@@ -76,9 +72,9 @@
           <div class="cover">
             <img class="cover-img" src="${p.image}" alt="Illustration du profil ${name}">
             <div class="cover-copy">
-              <div class="kicker">Votre portrait</div>
+              <div class="kicker">Votre portrait · <span class="family-name">${family.name}</span></div>
               <h1 tabindex="-1">${name}</h1>
-              <p class="deck">« ${p.quote} »</p>
+              <p class="deck">«&nbsp;${p.quote}&nbsp;»</p>
               <span class="tag">${result.code} · IA : ${ia.name}</span>
               <p>${p.intro}</p>
             </div>
@@ -86,17 +82,13 @@
           <div class="article">
             <div class="summary">
               <b>En bref</b>
-              <p>Profil principal : <strong>${name}</strong>. Profil secondaire : <strong>${secondaryName}</strong>. Votre manière d’enseigner est unique : ce portrait en éclaire les grandes tendances.</p>
+              <p>Profil principal : <strong>${name}</strong>. Profil secondaire : <strong>${App.data.profileName(s)}</strong>. Votre manière d’enseigner est unique : ce portrait en éclaire les grandes tendances.</p>
             </div>
 
             ${App.data.axes.map(function (axis) { return axisBar(axis, result.axes[axis.key]); })}
 
             <div class="analysis">
-              <section class="panel">
-                <h2>Votre façon d’enseigner</h2>
-                ${interpretation.map(function (t) { return html`<p>${t}</p>`; })}
-              </section>
-              <section class="panel">
+              <section class="panel wide">
                 <h2>Vos points forts</h2>
                 <div class="chips">${p.strengths.map(function (x) { return html`<span>${x}</span>`; })}</div>
               </section>
@@ -107,24 +99,21 @@
                 <p class="panel-note">L’IA prépare, vous décidez : votre expertise reste au centre.</p>
               </section>
 
-              <section class="panel wide">
-                <h2>Votre rapport à l’IA : ${ia.name}</h2>
-                ${iaScale(result.iaLevel)}
-                <p>${ia.message}</p>
-              </section>
-
               <section class="panel action">
-                <h2>Votre prompt pour démarrer</h2>
+                <h2>Votre cas d’usage pour démarrer</h2>
                 <p class="prompt" id="prompt-text">${p.prompt}</p>
                 <button type="button" class="btn btn-light" data-action="copy-prompt">Copier le prompt</button>
                 <span class="copy-status" role="status" aria-live="polite"></span>
                 <p class="panel-note">Collez-le dans ChatGPT, Copilot ou Gemini, puis complétez les passages entre crochets […].</p>
+                ${libraryLink()}
               </section>
 
               <section class="panel wide">
-                <h2>Repères chiffrés sur le métier</h2>
+                <h2>Pourquoi ce profil vous ressemble</h2>
+                <p class="stats-intro">${p.statsIntro}</p>
                 <ul class="stats">${p.stats.map(statCard)}</ul>
-                <p class="panel-note">Ces chiffres décrivent la profession dans son ensemble, pas votre activité personnelle.</p>
+                <p class="panel-note">Ces chiffres décrivent la profession dans son ensemble, pas votre activité personnelle.
+                  <a class="text-link" href="#methode">Sources et méthode →</a></p>
               </section>
             </div>
 

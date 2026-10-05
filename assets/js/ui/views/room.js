@@ -56,7 +56,7 @@
       return html`
         <div class="row">
           <span>${App.data.profileName(row.profile, 'n')}</span>
-          <span class="track" aria-hidden="true"><i style="width:${pct}%"></i></span>
+          <span class="track" aria-hidden="true"><i data-pct="${pct}"></i></span>
           <b aria-label="${row.count} résultat(s), ${pct} %">${row.count}</b>
         </div>`;
     });

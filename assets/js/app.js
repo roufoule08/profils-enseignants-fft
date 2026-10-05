@@ -10,9 +10,8 @@
   var navButtons = document.querySelectorAll('[data-nav]');
   var store = App.storage.roomStore;
 
-  /** gender : choix fait avant la question 1 ('f', 'm', 'n'), null tant qu'il n'est pas fait. */
   function newQuiz() {
-    return { gender: null, index: 0, answers: App.data.questions.map(function () { return null; }) };
+    return { index: 0, answers: App.data.questions.map(function () { return null; }) };
   }
 
   var state = {
@@ -29,6 +28,7 @@
       case 'quiz': return App.views.quiz(state.quiz);
       case 'result': return App.views.result(state.result);
       case 'room': return App.views.room(state.room, store);
+      case 'methode': return App.views.methode();
       default: return App.views.home();
     }
   }
@@ -41,6 +41,11 @@
   function render(options) {
     options = options || {};
     appEl.innerHTML = renderView().toString();
+
+    // Largeurs des barres : appliquées ici plutôt qu'en style dans le HTML (CSP).
+    appEl.querySelectorAll('[data-pct]').forEach(function (el) {
+      el.style.width = Math.max(0, Math.min(100, Number(el.dataset.pct) || 0)) + '%';
+    });
 
     navButtons.forEach(function (b) {
       if (b.dataset.nav === state.route) b.setAttribute('aria-current', 'page');
@@ -87,9 +92,7 @@
   }
 
   function finishQuiz() {
-    var computed = App.scoring.computeResult(state.quiz.answers);
-    computed.gender = state.quiz.gender;
-    var record = App.storage.createRecord(computed);
+    var record = App.storage.createRecord(App.scoring.computeResult(state.quiz.answers));
     state.result = record;
     App.storage.saveResult(record);
     store.add(record).catch(function (err) {
@@ -128,12 +131,6 @@
   var actions = {
     go: function (el) { go(el.dataset.route); },
 
-    gender: function (el) {
-      if (App.data.GENDERS.indexOf(el.dataset.value) < 0) return;
-      state.quiz.gender = el.dataset.value;
-      render({ focus: 'page' });
-    },
-
     answer: function (el) {
       var index = Number(el.dataset.index);
       state.quiz.answers[state.quiz.index] = index;
@@ -141,9 +138,8 @@
     },
 
     prev: function () {
-      // Depuis la question 1, on revient à l'écran « Vous êtes… ».
-      if (state.quiz.index === 0) state.quiz.gender = null;
-      else state.quiz.index--;
+      if (state.quiz.index === 0) return;
+      state.quiz.index--;
       render({ focus: 'page' });
     },
 

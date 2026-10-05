@@ -12,6 +12,9 @@ remplacer le savoir-faire de l'enseignant ou de l'enseignante.
 
 > Outil d'animation : ce n'est ni un test psychométrique ni une évaluation professionnelle.
 
+**Avant toute modification, lire `CLAUDE.md`** (règles de travail : le référentiel fait foi, rien n'est inventé)
+**et `DECISIONS.md`** (chaque écart au référentiel, avec son statut de validation).
+
 ## Utiliser le site
 
 - **En ligne** : publier le dépôt avec GitHub Pages (*Settings → Pages → Deploy from a branch → `main` / racine*).
@@ -23,21 +26,25 @@ Le site est en HTML, CSS et JavaScript « purs ». Il n'y a ni framework, ni ét
 
 ```
 index.html                  Page unique du site
+CLAUDE.md                   Règles de travail pour l'agent IA et pour l'équipe
+DECISIONS.md                Écarts au référentiel et leur validation
 assets/
   css/styles.css            Tout le style (mobile d'abord, grand écran en fin de fichier)
-  img/profils/*.jpg         Photos des six profils (optimisées, environ 100 Ko chacune)
+  img/profils/*.jpg         Photos des six profils (droits à l'image à valider : DECISIONS.md D-10)
   js/
     data/                   CONTENU : c'est ici qu'on modifie les textes
-      profiles.js           Les six profils (textes, image, position sur les axes)
+      profiles.js           Les six profils et leurs 3 familles (textes, photo, position sur les axes)
       questions.js          Les questions, les réponses et les points qu'elles rapportent
-      axes.js               Les trois axes du portrait et leurs textes d'interprétation
+      axes.js               Les trois axes du portrait
+      links.js              Liens externes (bibliothèque de prompts)
+      methode.js            Contenu de la page « Sources et méthode »
     core/                   LOGIQUE, sans affichage
       scoring.js            Calcul du portrait
       storage.js            Enregistrement des résultats (avec validation)
-      router.js             Navigation (#home, #quiz, #result, #room)
+      router.js             Navigation (#home, #quiz, #result, #room, #methode)
     ui/
       html.js               Gabarits HTML sûrs (le texte inséré est échappé)
-      views/                Une page par fichier : home, quiz, result, room
+      views/                Une page par fichier : home, quiz, result, room, methode
     app.js                  Point d'entrée : relie l'état, la navigation et les pages
 tests/
   index.html                Tests automatiques (ouvrir dans un navigateur)
@@ -47,13 +54,14 @@ tests/
 
 | Je veux…                               | Fichier à modifier             |
 |----------------------------------------|--------------------------------|
-| Changer un nom de profil (féminin, masculin, double) | `assets/js/data/profiles.js` (champ `names`) |
+| Changer un nom de profil               | `assets/js/data/profiles.js` (champ `names.both`, affiché partout) |
 | Changer un texte de profil, une piste IA ou un chiffre | `assets/js/data/profiles.js` |
 | Changer une question ou une réponse    | `assets/js/data/questions.js`  |
 | Changer les points d'une réponse       | `assets/js/data/questions.js` (champ `points`) |
-| Changer un texte d'interprétation d'axe| `assets/js/data/axes.js`       |
 | Changer une photo                      | Remplacer le fichier dans `assets/img/profils/` (même nom, JPG de 1400 px maximum) |
-| Changer un niveau IA et son message    | `assets/js/data/questions.js` (fin du fichier) |
+| Ajouter le lien de la bibliothèque     | `assets/js/data/links.js` (champ `promptLibrary`) |
+| Changer la page Sources et méthode     | `assets/js/data/methode.js` |
+| Changer un niveau IA                   | `assets/js/data/questions.js` (fin du fichier) |
 | Changer les couleurs                   | Variables en haut de `assets/css/styles.css` |
 
 On peut ajouter ou retirer des questions : le compteur, la barre de progression
@@ -61,6 +69,8 @@ et le calcul s'adaptent automatiquement.
 
 **Règles d'écriture** : un verbe en tête de chaque réponse, des formulations valables pour
 les femmes comme pour les hommes, un ton toujours valorisant et jamais critique.
+
+Tout changement de texte ou de calcul par rapport au référentiel doit être ajouté dans `DECISIONS.md`.
 
 **Après chaque modification, ouvrir `tests/index.html` : tout doit être vert.**
 

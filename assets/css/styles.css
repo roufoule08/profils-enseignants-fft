@@ -14,6 +14,9 @@
   --color-line: #d8ddd8;
   --color-muted: #66736c;
   --color-track: #dce1dc;
+  --color-fam-court: #c75227;
+  --color-fam-club: #374bc4;
+  --color-fam-traj: #2f7d4f;
 
   --font-display: 'Barlow Condensed', 'Arial Narrow', Arial, sans-serif;
   --font-body: 'Roboto Flex', Arial, sans-serif;
@@ -143,7 +146,6 @@ img { max-width: 100%; }
     url('../img/profils/passeur.jpg') 45% 38% / cover;
   color: #fff;
 }
-
 .hero-copy { padding: 32px 16px 44px; }
 
 .hero h1 {
@@ -170,6 +172,23 @@ img { max-width: 100%; }
 }
 
 .grid { display: grid; gap: 13px; }
+
+/* Couleurs des familles : terre battue, surface dure, gazon (documentation de reprise). */
+.fam-court { --fam: var(--color-fam-court); }
+.fam-club { --fam: var(--color-fam-club); }
+.fam-traj { --fam: var(--color-fam-traj); }
+
+/* Étiquette de famille, dans la couleur de sa surface de court. */
+.family-tag {
+  display: inline-block;
+  padding: 4px 8px;
+  background: var(--fam, var(--color-orange));
+  color: #fff;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
 
 .story {
   position: relative;
@@ -203,7 +222,6 @@ img { max-width: 100%; }
 
 .story h3 { font-size: 38px; line-height: .9; margin: 8px 0; }
 .story b { color: var(--color-ball); }
-
 /* ---------- Questionnaire ---------- */
 .quiz {
   min-height: calc(100svh - var(--header-height) - 16px);
@@ -276,11 +294,6 @@ img { max-width: 100%; }
 .ball::before { left: -58%; }
 .ball::after { right: -58%; }
 
-/* Écran « Vous êtes… » : boutons à leur taille naturelle */
-.answers-single { flex: none; }
-
-.quiz-note { font-size: 12px; color: var(--color-muted); margin: 12px 0 0; }
-
 .qnav {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -301,7 +314,6 @@ img { max-width: 100%; }
   object-position: 50% 25%;
   background: var(--color-green);
 }
-
 .cover-copy {
   padding: 20px 15px;
   background: var(--color-green);
@@ -321,6 +333,8 @@ img { max-width: 100%; }
   color: var(--color-green);
 }
 .cover .deck { color: #fff; }
+
+.family-name { color: #fff; }
 
 .tag {
   display: inline-block;
@@ -346,7 +360,6 @@ img { max-width: 100%; }
 
 .panel { padding: 17px; background: var(--color-cream); }
 .panel h2 { font-size: 28px; color: var(--color-green); margin: 0 0 8px; }
-.panel.warning { background: #fff4ed; }
 .panel.action { background: var(--color-green); color: #fff; }
 .panel.action h2 { color: var(--color-ball); }
 
@@ -398,32 +411,6 @@ img { max-width: 100%; }
   font: 900 18px var(--font-display);
 }
 
-/* Échelle de maturité IA en 5 cases */
-.ia-scale {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 4px;
-  margin: 4px 0 12px;
-  padding: 0;
-  list-style: none;
-}
-.ia-scale li {
-  padding: 8px 4px;
-  background: #fff;
-  border: 1px solid var(--color-line);
-  font-size: 11px;
-  font-weight: 700;
-  line-height: 1.1;
-  text-align: center;
-  color: var(--color-muted);
-}
-.ia-scale li.on {
-  background: var(--color-orange);
-  border-color: var(--color-orange);
-  color: #fff;
-}
-.ia-scale li.current { outline: 2px solid var(--color-green); outline-offset: 1px; }
-
 /* Repères chiffrés */
 .stats {
   display: grid;
@@ -446,6 +433,19 @@ img { max-width: 100%; }
 }
 .stat-quote .stat-label { font-style: italic; font-weight: 600; }
 .stat-source { font-size: 11px; color: var(--color-muted); }
+.stats-intro { font-weight: 600; margin-top: 0; }
+
+.text-link { color: inherit; font-weight: 700; text-underline-offset: 3px; }
+.panel.action .text-link { display: inline-block; margin-top: 10px; color: var(--color-ball); }
+
+/* ---------- Sources et méthode ---------- */
+.methode h2 { font-size: 30px; color: var(--color-green); margin: 28px 0 10px; }
+.methode li { margin: 6px 0; }
+.table-scroll { overflow-x: auto; }
+.sources { width: 100%; border-collapse: collapse; font-size: 13px; }
+.sources th, .sources td { padding: 8px; border-bottom: 1px solid var(--color-line); text-align: left; vertical-align: top; }
+.sources thead th { background: var(--color-cream); }
+.methode .btn { margin-top: 20px; }
 
 /* ---------- La salle ---------- */
 .room { padding: 24px 13px; background: #fff; }
@@ -469,6 +469,11 @@ img { max-width: 100%; }
   text-align: center;
   font-size: 10px;
 }
+.footer p { margin: 0 0 8px; }
+.footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 16px; }
+.footer a { color: #fff; }
+
+.noscript { padding: 24px; }
 
 /* ---------- Grand écran ---------- */
 @media (min-width: 760px) {
@@ -499,8 +504,7 @@ img { max-width: 100%; }
     inset: 0;
     z-index: -1;
     background: linear-gradient(90deg, var(--color-green) 0 32%, #003c2ecc 40%, #003c2e33 58%, transparent 75%);
-  }
-  .hero-copy { padding: 7vw; max-width: 760px; }
+  }  .hero-copy { padding: 7vw; max-width: 760px; }
   .hero h1 { font-size: 112px; }
 
   .grid { grid-template-columns: repeat(3, 1fr); }
@@ -509,7 +513,6 @@ img { max-width: 100%; }
   .quiz, .mag, .room { max-width: 1050px; margin: auto; }
   .quiz { min-height: auto; padding: 42px; }
   .answers { grid-template-columns: 1fr 1fr; }
-  .answers-single { grid-template-columns: 1fr; max-width: 520px; flex: none; }
 
   .cover {
     display: grid;

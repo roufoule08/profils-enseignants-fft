@@ -30,6 +30,16 @@
     return Promise.resolve().then(fn).then(restore, function (err) { restore(); throw err; });
   }
 
+  /** HTML de toutes les pages du site, pour les vérifications transversales. */
+  function allPages(record) {
+    return [
+      App.views.home(),
+      App.views.quiz({ index: 0, answers: questions.map(function () { return null; }) }),
+      App.views.result(record),
+      App.views.room({ status: 'ready', entries: [record] }, { isShared: false }),
+      App.views.methode()
+    ].map(String);
+  }
   /* ---------- Données ---------- */
 
   test('Données : chaque point de question vise un profil existant', function () {
@@ -42,13 +52,22 @@
     });
   });
 
-  test('Données : chaque profil a une position sur chaque axe et une image', function () {
+  test('Données : chaque profil a une position sur chaque axe, une famille et une photo', function () {
     App.data.profiles.forEach(function (p) {
       App.data.axes.forEach(function (axis) {
         var v = p.axes[axis.key];
         assert(typeof v === 'number' && v >= -1 && v <= 1, p.id + ' : axe ' + axis.key + ' invalide');
       });
-      assert(/^assets\/img\/profils\/.+\.jpg$/.test(p.image), p.id + ' : image manquante');
+      assert(App.data.families[p.family], p.id + ' : famille inconnue');
+      assert(/^assets\/img\/profils\/.+\.jpg$/.test(p.image), p.id + ' : photo manquante');
+      assert(p.statsIntro, p.id + ' : phrase de lien avec les chiffres');
+    });
+  });
+
+  test('Données : 2 profils par famille (documentation de reprise)', function () {
+    Object.keys(App.data.families).forEach(function (f) {
+      var n = App.data.profiles.filter(function (p) { return p.family === f; }).length;
+      assertEqual(n, 2, 'Famille ' + f);
     });
   });
 
@@ -126,6 +145,19 @@
     var jamais = usages.answers.find(function (a) { return a.id === 'jamais'; });
     assert(jamais && !jamais.points, 'Aucun point attendu');
   });
+
+  test('Calcul : exemple chiffré de la documentation de reprise', function () {
+    // Q1 A, Q2 A, Q3 A, Q4 E, Q5 A, Q6 B, Q7 E, Q8 A, Q9 C, Q10 « séances ».
+    // Q10 « séances » donne les mêmes points que l'ancienne réponse D (P +0,5, C +0,5).
+    var r = App.scoring.computeResult([0, 0, 0, 4, 0, 1, 4, 0, 2, 0]);
+    assertEqual(r.profile, 'passeur');
+    assertEqual(r.secondary, 'jeune-pro');
+    assertEqual(r.axes, { terrainClub: 84, reperesExploration: 31, groupeIndividuel: 72 });
+    assertEqual(r.code, 'T-X-G');
+    // La documentation donne 3 (moyenne Q9 et Q10) ; depuis D-08, le niveau vient de Q9 seule : C = 2.
+    assertEqual(r.iaLevel, 2);
+  });
+
   test('Calcul : refuse un questionnaire incomplet ou invalide', function () {
     var incomplete = questions.map(function () { return 0; });
     incomplete[3] = null;
@@ -152,14 +184,6 @@
     var first = App.scoring.computeResult(answers);
     App.views._countByProfile([{ profile: 'sage' }, { profile: 'sage' }]);
     assertEqual(App.scoring.computeResult(answers), first);
-  });
-
-  test('Bug corrigé : axe Groupe/Individuel entre 41 et 59 % → texte « équilibré »', function () {
-    var texts = App.scoring.interpretAxes({ terrainClub: 50, reperesExploration: 50, groupeIndividuel: 55 });
-    var groupe = App.data.axes[2].texts;
-    assertEqual(texts[2], groupe.balanced);
-    assertEqual(App.scoring.interpretAxes({ terrainClub: 50, reperesExploration: 50, groupeIndividuel: 60 })[2], groupe.left);
-    assertEqual(App.scoring.interpretAxes({ terrainClub: 50, reperesExploration: 50, groupeIndividuel: 40 })[2], groupe.right);
   });
 
   test('Bug corrigé : un même résultat n’est compté qu’une fois dans la salle', function () {
@@ -222,11 +246,21 @@
     });
   });
 
-  test('Stockage : la salle ne conserve que des données anonymes (jamais le choix « Vous êtes… »)', function () {
+  test('Stockage : le genre enregistré par une version précédente est effacé', function () {
     return withCleanStorage(function () {
-      var computed = App.scoring.computeResult(questions.map(function () { return 2; }));
+      var computed = App.scoring.computeResult(questions.map(function () { return 0; }));
       computed.gender = 'f';
-      var record = App.storage.createRecord(computed);
+      App.storage.saveResult(App.storage.createRecord(computed));
+      var r = App.storage.loadResult();
+      assert(r && !('gender' in r), 'Genre effacé du portrait');
+      var raw = localStorage.getItem(App.storage._internal.KEYS.result);
+      assert(raw.indexOf('gender') < 0, 'Genre effacé du stockage');
+    });
+  });
+
+  test('Stockage : la salle ne conserve que des données anonymes', function () {
+    return withCleanStorage(function () {
+      var record = App.storage.createRecord(App.scoring.computeResult(questions.map(function () { return 2; })));
       return App.storage.roomStore.add(record)
         .then(function () { return App.storage.roomStore.list(); })
         .then(function (rows) {
@@ -245,81 +279,102 @@
   });
 
   test('Affichage : le questionnaire s’adapte au nombre de questions', function () {
-    var out = App.views.quiz({ gender: 'n', index: questions.length - 1, answers: questions.map(function () { return 0; }) }).toString();
+    var out = App.views.quiz({ index: questions.length - 1, answers: questions.map(function () { return 0; }) }).toString();
     assert(out.indexOf('Question ' + questions.length + '/' + questions.length) >= 0, 'Compteur de questions');
     assert(out.indexOf('Voir mon portrait') >= 0, 'Dernière question');
     assert(out.indexOf('100 %') >= 0, 'Progression à 100 %');
   });
 
   test('Affichage : boutons du questionnaire « Servir le prochain point » et « Rejouer le point d’avant »', function () {
-    var out = App.views.quiz({ gender: 'n', index: 1, answers: questions.map(function () { return 0; }) }).toString();
+    var out = App.views.quiz({ index: 1, answers: questions.map(function () { return 0; }) }).toString();
     assert(out.indexOf('Servir le prochain point') >= 0, 'Bouton suivant');
     assert(out.indexOf('Rejouer le point d’avant') >= 0, 'Bouton précédent');
   });
 
-  test('Affichage : le portrait montre les 3 pistes IA, le niveau IA, le prompt à copier et les sources', function () {
+  test('Affichage : le portrait montre les pistes IA, le cas d’usage à copier, les chiffres reliés au profil et leurs sources', function () {
     var record = App.storage.createRecord(App.scoring.computeResult(questions.map(function () { return 0; })));
     var out = App.views.result(record).toString();
     var p = App.data.getProfile(record.profile);
     assertEqual((out.match(/class="piste"/g) || []).length, 3, 'Pistes');
-    assert(out.indexOf(App.data.iaLevels[record.iaLevel].message) >= 0, 'Message du niveau IA');
+    assert(out.indexOf('Votre cas d’usage pour démarrer') >= 0, 'Titre du cas d’usage');
     assert(out.indexOf('data-action="copy-prompt"') >= 0, 'Bouton copier');
+    assert(out.indexOf(App.ui.escapeHtml(p.statsIntro)) >= 0, 'Phrase de lien avec le profil');
     assert(out.indexOf(App.ui.escapeHtml(p.stats[0].source)) >= 0, 'Source des chiffres');
+    assert(out.indexOf('href="#methode"') >= 0, 'Lien vers Sources et méthode');
+  });
+
+  test('Affichage : retraits demandés (rapport à l’IA, vigilance, textes d’axes inventés)', function () {
+    var record = App.storage.createRecord(App.scoring.computeResult(questions.map(function () { return 0; })));
+    var out = App.views.result(record).toString();
+    assert(out.indexOf('Votre rapport à l’IA') < 0, 'Bloc « Votre rapport à l’IA » retiré');
+    assert(out.indexOf(App.data.iaLevels[record.iaLevel].message) < 0, 'Message du niveau IA retiré');
     assert(out.indexOf('vigilance') < 0, 'Plus de « points de vigilance »');
+    assert(out.indexOf('Votre façon d’enseigner') < 0, 'Interprétation des axes retirée');
+    assert(!App.scoring.interpretAxes, 'Plus de seuils 60/40 dans le calcul');
+  });
+
+  test('Affichage : aucun lien vers la bibliothèque tant que son adresse n’est pas validée', function () {
+    var record = App.storage.createRecord(App.scoring.computeResult(questions.map(function () { return 0; })));
+    if (App.data.links.promptLibrary) return;
+    assert(App.views.result(record).toString().indexOf('bibliothèque de prompts') < 0);
   });
 
   test('Affichage : chaque page a un titre principal unique', function () {
     var record = App.storage.createRecord(App.scoring.computeResult(questions.map(function () { return 0; })));
-    var pages = [
-      App.views.home(),
-      App.views.quiz({ gender: 'n', index: 0, answers: questions.map(function () { return null; }) }),
-      App.views.result(record),
-      App.views.room({ status: 'ready', entries: [record] }, { isShared: false })
-    ];
-    pages.forEach(function (page, i) {
-      assertEqual((page.toString().match(/<h1/g) || []).length, 1, 'Page ' + i);
+    allPages(record).forEach(function (page, i) {
+      assertEqual((page.match(/<h1/g) || []).length, 1, 'Page ' + i);
     });
   });
 
-  test('Affichage : toutes les images de l’accueil ont un texte alternatif', function () {
-    var imgs = App.views.home().toString().match(/<img[^>]*>/g) || [];
-    assertEqual(imgs.length, App.data.profiles.length);
-    imgs.forEach(function (tag) { assert(/alt="[^"]+"/.test(tag), 'alt manquant : ' + tag); });
+  /* ---------- Images, inclusion, sécurité ---------- */
+
+  test('Images : chaque photo a un texte alternatif et se charge', function () {
+    var record = App.storage.createRecord(App.scoring.computeResult(questions.map(function () { return 0; })));
+    allPages(record).forEach(function (page) {
+      (page.match(/<img[^>]*>/g) || []).forEach(function (tag) {
+        assert(/alt="[^"]+"/.test(tag), 'alt manquant : ' + tag);
+      });
+    });
+    return Promise.all(App.data.profiles.map(function (p) {
+      return new Promise(function (resolve, reject) {
+        var img = new Image();
+        img.onload = resolve;
+        img.onerror = function () { reject(new Error('Photo introuvable : ' + p.image)); };
+        img.src = '../' + p.image;
+      });
+    }));
   });
 
-  /* ---------- Choix « Vous êtes… » ---------- */
-
-  test('Accord : nom du profil au féminin, au masculin ou sous les deux formes', function () {
+  test('Inclusion : les noms des profils s’affichent toujours sous les deux formes', function () {
     var p = App.data.getProfile('passeur');
-    assertEqual(App.data.profileName(p, 'f'), 'La Passeuse');
-    assertEqual(App.data.profileName(p, 'm'), 'Le Passeur');
-    assertEqual(App.data.profileName(p, 'n'), 'Le Passeur · La Passeuse');
-    assertEqual(App.data.profileName(p, undefined), 'Le Passeur · La Passeuse', 'Ancien portrait sans choix');
+    assertEqual(App.data.profileName(p), 'Le Passeur · La Passeuse');
+    var record = App.storage.createRecord(App.scoring.computeResult(questions.map(function () { return 0; })));
+    assert(App.views.result(record).toString().indexOf('Le Passeur · La Passeuse') >= 0, 'Portrait');
+    assert(App.views.home().toString().indexOf('Le Passeur · La Passeuse') >= 0, 'Accueil');
     App.data.profiles.forEach(function (pr) {
       assert(pr.names.m && pr.names.f && pr.names.both, pr.id + ' : noms incomplets');
     });
   });
 
-  test('Accord : le questionnaire commence par l’écran « Vous êtes… »', function () {
-    var out = App.views.quiz({ gender: null, index: 0, answers: questions.map(function () { return null; }) }).toString();
-    assertEqual((out.match(/data-action="gender"/g) || []).length, 3);
-    assert(out.indexOf('Question 1/') < 0, 'La question 1 ne doit pas encore s’afficher');
-    var q1 = App.views.quiz({ gender: 'f', index: 0, answers: questions.map(function () { return null; }) }).toString();
-    assert(q1.indexOf('Question 1/' + questions.length) >= 0, 'Question 1 après le choix');
+  test('Inclusion : plus aucune question sur le genre', function () {
+    var out = App.views.quiz({ index: 0, answers: questions.map(function () { return null; }) }).toString();
+    assert(out.indexOf('data-action="gender"') < 0, 'Écran « Vous êtes… » retiré');
+    assert(out.indexOf('Question 1/' + questions.length) >= 0, 'Le questionnaire commence à la question 1');
   });
 
-  test('Accord : le portrait s’affiche au féminin pour une enseignante', function () {
-    var computed = App.scoring.computeResult(questions.map(function () { return 0; }));
-    computed.gender = 'f';
-    var out = App.views.result(App.storage.createRecord(computed)).toString();
-    assert(out.indexOf('La Passeuse') >= 0, 'Nom au féminin');
-    assert(out.indexOf('Le Passeur') < 0, 'Pas de nom au masculin');
+  test('Sécurité : aucun style ni script écrit dans le HTML des pages (CSP stricte)', function () {
+    var record = App.storage.createRecord(App.scoring.computeResult(questions.map(function () { return 0; })));
+    allPages(record).forEach(function (page, i) {
+      assert(!/\sstyle=/.test(page), 'Attribut style dans la page ' + i);
+      assert(!/\son[a-z]+=/.test(page), 'Gestionnaire onclick… dans la page ' + i);
+      assert(page.indexOf('<script') < 0, 'Script dans la page ' + i);
+    });
   });
 
-  test('Accord : un choix enregistré invalide est refusé', function () {
-    var computed = App.scoring.computeResult(questions.map(function () { return 0; }));
-    computed.gender = 'x';
-    assert(!App.storage._internal.isValidResult(App.storage.createRecord(computed)));
+  test('Sources et méthode : 11 sources, la méthode et les limites', function () {
+    var out = App.views.methode().toString();
+    assertEqual((out.match(/<tr>/g) || []).length, 1 + 11, 'En-tête + 11 sources');
+    assert(out.indexOf('Les limites') >= 0 && out.indexOf('La méthode') >= 0);
   });
 
   /* ---------- Navigation ---------- */
@@ -327,6 +382,7 @@
   test('Navigation : adresses reconnues et adresse inconnue → accueil', function () {
     assertEqual(App.router.parse('#quiz'), 'quiz');
     assertEqual(App.router.parse('#room'), 'room');
+    assertEqual(App.router.parse('#methode'), 'methode');
     assertEqual(App.router.parse('#/result'), 'result');
     assertEqual(App.router.parse('#nimporte-quoi'), 'home');
     assertEqual(App.router.parse(''), 'home');
