@@ -98,6 +98,30 @@
     go('result');
   }
 
+  /** Copie dans le presse-papiers, avec une solution de repli pour les anciens navigateurs. */
+  function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      return navigator.clipboard.writeText(text).catch(function () { return copyWithSelection(text); });
+    }
+    return copyWithSelection(text);
+  }
+
+  function copyWithSelection(text) {
+    return new Promise(function (resolve, reject) {
+      var area = document.createElement('textarea');
+      area.value = text;
+      area.setAttribute('readonly', '');
+      area.style.position = 'fixed';
+      area.style.opacity = '0';
+      document.body.appendChild(area);
+      area.select();
+      var ok = false;
+      try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+      document.body.removeChild(area);
+      if (ok) resolve(); else reject(new Error('copie refusée'));
+    });
+  }
+
   var actions = {
     go: function (el) { go(el.dataset.route); },
 
@@ -127,6 +151,16 @@
     restart: function () {
       resetQuiz();
       go('quiz');
+    },
+
+    'copy-prompt': function (el) {
+      var text = appEl.querySelector('#prompt-text').textContent;
+      var status = appEl.querySelector('.copy-status');
+      copyText(text).then(
+        function () { status.textContent = 'Prompt copié !'; },
+        function () { status.textContent = 'Copie impossible : sélectionnez le texte à la main.'; }
+      );
+      el.blur();
     },
 
     'reload-room': function () {

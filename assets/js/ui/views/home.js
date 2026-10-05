@@ -24,8 +24,9 @@
         <div class="hero">
           <div class="hero-copy">
             <div class="kicker">Colloque des Enseignants</div>
-            <h1 tabindex="-1">Quel profil <span>tennis</span> êtes-vous ?</h1>
-            <p>Découvrez vos appuis, vos points de vigilance et des pistes concrètes adaptées à votre manière d’enseigner.</p>
+            <h1 tabindex="-1">Quel profil <span>enseignant</span> êtes-vous ?</h1>
+            <p>En 2 minutes, découvrez vos points forts et des pistes concrètes pour que l’IA vous fasse gagner du temps au quotidien.</p>
+            <p class="hero-note">L’IA ne remplace pas votre savoir-faire : elle vous libère du temps pour le terrain.</p>
             <button type="button" class="btn" data-action="go" data-route="quiz">Commencer</button>
           </div>
         </div>

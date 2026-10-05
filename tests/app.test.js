@@ -59,6 +59,34 @@
     assertEqual(new Set(qids).size, qids.length, 'Questions en double');
   });
 
+  test('Contenu : chaque profil a 3 points forts, 3 pistes IA, un prompt et des chiffres sourcés', function () {
+    App.data.profiles.forEach(function (p) {
+      assertEqual(p.strengths.length, 3, p.name + ' : points forts');
+      assertEqual(p.pistes.length, 3, p.name + ' : pistes');
+      p.pistes.forEach(function (piste) {
+        assert(piste.title && piste.text, p.name + ' : piste incomplète');
+      });
+      assert(p.prompt && p.prompt.length > 20, p.name + ' : prompt');
+      assert(p.stats.length >= 1, p.name + ' : chiffres');
+      p.stats.forEach(function (st) {
+        assert(st.label && st.source, p.name + ' : chaque chiffre doit avoir un texte et une source');
+      });
+    });
+  });
+
+  test('Contenu : chaque question et chaque réponse a un texte', function () {
+    questions.forEach(function (q) {
+      assert(q.text && q.text.trim(), 'Question sans texte : ' + q.id);
+      assert(q.answers.length >= 2, 'Pas assez de réponses : ' + q.id);
+      q.answers.forEach(function (a) { assert(a.label && a.label.trim(), 'Réponse vide dans ' + q.id); });
+    });
+  });
+
+  test('Contenu : 5 niveaux IA, chacun avec un nom et un message', function () {
+    assertEqual(App.data.iaLevels.length, 5);
+    App.data.iaLevels.forEach(function (l) { assert(l.name && l.message, 'Niveau IA incomplet'); });
+  });
+
   /* ---------- Calcul : identique à la première version ---------- */
 
   test('Calcul : résultat identique à l’ancienne version sur 5 000 questionnaires aléatoires', function () {
@@ -205,6 +233,23 @@
     assert(out.indexOf('Question ' + questions.length + '/' + questions.length) >= 0, 'Compteur de questions');
     assert(out.indexOf('Voir mon portrait') >= 0, 'Dernière question');
     assert(out.indexOf('100 %') >= 0, 'Progression à 100 %');
+  });
+
+  test('Affichage : boutons du questionnaire « Servir le prochain point » et « Rejouer le point d’avant »', function () {
+    var out = App.views.quiz({ index: 1, answers: questions.map(function () { return 0; }) }).toString();
+    assert(out.indexOf('Servir le prochain point') >= 0, 'Bouton suivant');
+    assert(out.indexOf('Rejouer le point d’avant') >= 0, 'Bouton précédent');
+  });
+
+  test('Affichage : le portrait montre les 3 pistes IA, le niveau IA, le prompt à copier et les sources', function () {
+    var record = App.storage.createRecord(App.scoring.computeResult(questions.map(function () { return 0; })));
+    var out = App.views.result(record).toString();
+    var p = App.data.getProfile(record.profile);
+    assertEqual((out.match(/class="piste"/g) || []).length, 3, 'Pistes');
+    assert(out.indexOf(App.data.iaLevels[record.iaLevel].message) >= 0, 'Message du niveau IA');
+    assert(out.indexOf('data-action="copy-prompt"') >= 0, 'Bouton copier');
+    assert(out.indexOf(App.ui.escapeHtml(p.stats[0].source)) >= 0, 'Source des chiffres');
+    assert(out.indexOf('vigilance') < 0, 'Plus de « points de vigilance »');
   });
 
   test('Affichage : chaque page a un titre principal unique', function () {

@@ -72,12 +72,10 @@ img { max-width: 100%; }
   padding: 0 14px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   background: var(--color-green);
   color: #fff;
 }
-
-.brand { font-weight: 900; font-size: 13px; }
 
 .nav { display: flex; gap: 2px; }
 
@@ -142,7 +140,7 @@ img { max-width: 100%; }
   align-items: flex-end;
   background:
     linear-gradient(#003c2e33, #003c2ee8),
-    url('../img/profils/passeur.jpg') 50% 38% / cover;
+    url('../img/profils/passeur.jpg') 45% 38% / cover;
   color: #fff;
 }
 
@@ -154,6 +152,13 @@ img { max-width: 100%; }
   margin: 14px 0;
 }
 .hero h1 span { color: var(--color-orange); }
+
+.hero-note {
+  margin: 0 0 22px;
+  padding-left: 12px;
+  border-left: 3px solid var(--color-ball);
+  font-weight: 600;
+}
 
 .section { padding: 42px 12px; }
 
@@ -350,6 +355,93 @@ img { max-width: 100%; }
 
 .prompt { font-weight: 700; color: var(--color-ball); font-size: 18px; }
 
+.panel-note { font-size: 13px; opacity: .8; margin-bottom: 0; }
+
+.btn-light { background: #fff; color: var(--color-green); }
+.copy-status { margin-left: 10px; font-weight: 700; color: var(--color-ball); }
+
+/* 3 pistes IA */
+.pistes {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.piste {
+  display: flex;
+  gap: 12px;
+  padding: 14px;
+  background: #fff;
+}
+.piste h3 {
+  margin: 2px 0 6px;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--color-green);
+}
+.piste p { margin: 0; font-size: 14px; }
+.piste-num {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--color-orange);
+  color: #fff;
+  font: 900 18px var(--font-display);
+}
+
+/* Échelle de maturité IA en 5 cases */
+.ia-scale {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+  margin: 4px 0 12px;
+  padding: 0;
+  list-style: none;
+}
+.ia-scale li {
+  padding: 8px 4px;
+  background: #fff;
+  border: 1px solid var(--color-line);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.1;
+  text-align: center;
+  color: var(--color-muted);
+}
+.ia-scale li.on {
+  background: var(--color-orange);
+  border-color: var(--color-orange);
+  color: #fff;
+}
+.ia-scale li.current { outline: 2px solid var(--color-green); outline-offset: 1px; }
+
+/* Repères chiffrés */
+.stats {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px;
+  background: #fff;
+  border-top: 4px solid var(--color-orange);
+}
+.stat-value {
+  font: 900 40px / 1 var(--font-display);
+  color: var(--color-green);
+}
+.stat-quote .stat-label { font-style: italic; font-weight: 600; }
+.stat-source { font-size: 11px; color: var(--color-muted); }
+
 /* ---------- La salle ---------- */
 .room { padding: 24px 13px; background: #fff; }
 .room h1 { font-size: 58px; color: var(--color-green); margin: 0; }
@@ -380,12 +472,28 @@ img { max-width: 100%; }
   .top { padding: 0 4vw; }
   .nav button { font-size: 14px; padding: 10px; }
 
+  /* Grand écran : le texte reste sur le fond vert à gauche, la photo occupe la
+     droite de l'écran pour que le joueur ne soit pas masqué par le dégradé. */
   .hero {
+    position: relative;
+    isolation: isolate;
     min-height: calc(100vh - var(--header-height));
     align-items: center;
-    background:
-      linear-gradient(90deg, #003c2ef2 0 40%, #003c2e1c 75%),
-      url('../img/profils/passeur.jpg') 50% 38% / cover;
+    background: var(--color-green);
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 0 32%;
+    z-index: -2;
+    background: url('../img/profils/passeur.jpg') 45% 30% / cover;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(90deg, var(--color-green) 0 32%, #003c2ecc 40%, #003c2e33 58%, transparent 75%);
   }
   .hero-copy { padding: 7vw; max-width: 760px; }
   .hero h1 { font-size: 112px; }
@@ -412,5 +520,8 @@ img { max-width: 100%; }
 
   .article { padding: 38px; }
   .analysis { grid-template-columns: 1fr 1fr; }
-  .panel.action { grid-column: 1 / -1; }
+  .panel.action,
+  .panel.wide { grid-column: 1 / -1; }
+  .pistes { grid-template-columns: repeat(3, 1fr); }
+  .stats { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
 }

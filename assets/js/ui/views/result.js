@@ -27,9 +27,35 @@
       </div>`;
   }
 
-  function list(tag, items) {
-    var li = items.map(function (x) { return html`<li>${x}</li>`; });
-    return tag === 'ol' ? html`<ol>${li}</ol>` : html`<ul>${li}</ul>`;
+  function pisteCard(piste, i) {
+    return html`
+      <li class="piste">
+        <span class="piste-num" aria-hidden="true">${i + 1}</span>
+        <div>
+          <h3>${piste.title}</h3>
+          <p>${piste.text}</p>
+        </div>
+      </li>`;
+  }
+
+  /** Échelle en 5 cases : les cases jusqu'au niveau atteint sont pleines. */
+  function iaScale(level) {
+    var levels = App.data.iaLevels;
+    return html`
+      <ol class="ia-scale" aria-label="Niveau ${level + 1} sur ${levels.length}">
+        ${levels.map(function (l, i) {
+          return html`<li class="${i <= level ? 'on' : ''}${i === level ? ' current' : ''}">${l.name}</li>`;
+        })}
+      </ol>`;
+  }
+
+  function statCard(stat) {
+    return html`
+      <li class="stat${stat.value ? '' : ' stat-quote'}">
+        ${stat.value ? html`<b class="stat-value">${stat.value}</b>` : ''}
+        <span class="stat-label">${stat.label}</span>
+        <small class="stat-source">${stat.source}</small>
+      </li>`;
   }
 
   /** @param {Object|null} result portrait enregistré (voir core/storage.js) */
@@ -39,9 +65,8 @@
     var s = result && App.data.getProfile(result.secondary);
     if (!p || !s) return emptyState();
 
-    var iaLabel = App.data.iaLevels[result.iaLevel];
+    var ia = App.data.iaLevels[result.iaLevel];
     var interpretation = App.scoring.interpretAxes(result.axes);
-    var stats = p.stats.map(function (st) { return st.value + ' ' + st.label; }).join(' ; ');
 
     return html`
       <section class="page">
@@ -52,41 +77,55 @@
               <div class="kicker">Votre portrait</div>
               <h1 tabindex="-1">${p.name}</h1>
               <p class="deck">« ${p.quote} »</p>
-              <span class="tag">${result.code} · IA ${iaLabel}</span>
+              <span class="tag">${result.code} · IA : ${ia.name}</span>
               <p>${p.intro}</p>
             </div>
           </div>
           <div class="article">
             <div class="summary">
               <b>En bref</b>
-              <p>Votre profil dominant est ${p.name}. Votre profil secondaire, ${s.name}, nuance ce résultat : votre manière d’enseigner ne se résume pas à une seule catégorie.</p>
+              <p>Profil principal : <strong>${p.name}</strong>. Profil secondaire : <strong>${s.name}</strong>. Votre manière d’enseigner est unique : ce portrait en éclaire les grandes tendances.</p>
             </div>
+
             ${App.data.axes.map(function (axis) { return axisBar(axis, result.axes[axis.key]); })}
+
             <div class="analysis">
               <section class="panel">
-                <h2>Ce que vos chiffres racontent</h2>
+                <h2>Votre façon d’enseigner</h2>
                 ${interpretation.map(function (t) { return html`<p>${t}</p>`; })}
               </section>
-              <section class="panel warning">
-                <h2>Points de vigilance</h2>
-                ${list('ul', p.watchouts)}
-              </section>
               <section class="panel">
-                <h2>Vos appuis</h2>
+                <h2>Vos points forts</h2>
                 <div class="chips">${p.strengths.map(function (x) { return html`<span>${x}</span>`; })}</div>
-                <h2>Deux prochaines étapes</h2>
-                ${list('ol', p.nextSteps)}
               </section>
-              <section class="panel">
-                <h2>Comment l’IA peut vous aider</h2>
-                ${list('ul', p.aiUses)}
+
+              <section class="panel wide">
+                <h2>3 pistes où l’IA peut vous faciliter le travail</h2>
+                <ol class="pistes">${p.pistes.map(pisteCard)}</ol>
+                <p class="panel-note">L’IA prépare, vous décidez : votre expertise reste au centre.</p>
               </section>
+
+              <section class="panel wide">
+                <h2>Votre rapport à l’IA : ${ia.name}</h2>
+                ${iaScale(result.iaLevel)}
+                <p>${ia.message}</p>
+              </section>
+
               <section class="panel action">
                 <h2>Votre prompt pour démarrer</h2>
-                <p class="prompt">« ${p.prompt} »</p>
+                <p class="prompt" id="prompt-text">${p.prompt}</p>
+                <button type="button" class="btn btn-light" data-action="copy-prompt">Copier le prompt</button>
+                <span class="copy-status" role="status" aria-live="polite"></span>
+                <p class="panel-note">Collez-le dans ChatGPT, Copilot ou Gemini, puis complétez les passages entre crochets […].</p>
+              </section>
+
+              <section class="panel wide">
+                <h2>Repères chiffrés sur le métier</h2>
+                <ul class="stats">${p.stats.map(statCard)}</ul>
+                <p class="panel-note">Ces chiffres décrivent la profession dans son ensemble, pas votre activité personnelle.</p>
               </section>
             </div>
-            <p><small>Données d’ancrage : ${stats}. Ces chiffres contextualisent le profil et ne mesurent pas votre performance individuelle.</small></p>
+
             <button type="button" class="btn" data-action="restart">Refaire le questionnaire</button>
           </div>
         </article>

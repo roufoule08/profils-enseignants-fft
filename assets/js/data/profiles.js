@@ -4,15 +4,24 @@
  * L'ordre de ce tableau est l'ordre d'affichage (accueil, salle) et sert
  * aussi de dernier critère pour départager deux profils à égalité.
  *
- * `axes` : position du profil sur chaque axe, de -1 à +1.
- *   -1 = pôle de gauche (Terrain, Repères, Groupe)
- *   +1 = pôle de droite (Club, Exploration, Individuel)
- * Voir data/axes.js pour la définition des axes.
+ * Ton à respecter dans tous les textes : valorisant, jamais critique.
+ * L'IA est présentée comme une aide qui fait gagner du temps, pas comme
+ * un remplacement du savoir-faire de l'enseignant ou de l'enseignante.
+ *
+ * Champs :
+ *   strengths : 3 points forts
+ *   pistes    : 3 pistes concrètes où l'IA facilite le travail { title, text }
+ *   prompt    : consigne prête à copier pour un premier essai
+ *   stats     : repères chiffrés issus des études { value, label, source }
+ *   axes      : position du profil sur chaque axe, de -1 à +1
+ *               (-1 = Terrain / Repères / Groupe, +1 = Club / Exploration / Individuel)
  */
 (function (App) {
   'use strict';
 
   App.data = App.data || {};
+
+  var NA_2024 = 'Enquête métier, Ligue de Nouvelle-Aquitaine de tennis, 2024 (729 éducateurs)';
 
   App.data.profiles = Object.freeze([
     {
@@ -21,21 +30,27 @@
       player: 'Yannick Noah',
       image: 'assets/img/profils/passeur.jpg',
       quote: 'Ma fierté, c’est de les voir progresser.',
-      intro: 'Vous placez la progression et la relation pédagogique au centre de votre métier.',
-      strengths: ['Pédagogie patiente', 'Animation du groupe', 'Lien avec les familles'],
-      watchouts: [
-        'Éviter de porter seul le suivi de chacun',
-        'Garder du temps pour préparer sans vous disperser'
+      intro: 'Vous placez la progression des élèves et la relation pédagogique au cœur de votre métier.',
+      strengths: ['Pédagogie et patience', 'Animation de groupe', 'Lien de confiance avec les familles'],
+      pistes: [
+        {
+          title: 'Adapter une séance à chaque niveau',
+          text: 'Décrivez votre groupe (âge, niveau, objectif) : l’IA vous propose une trame et des variantes adaptées à chaque niveau du groupe. Vous gardez la main sur le choix final.'
+        },
+        {
+          title: 'Gagner du temps avec les familles',
+          text: 'Messages d’information, réponses aux questions fréquentes, bilans de trimestre : l’IA prépare un premier jet, vous le relisez et y ajoutez votre regard.'
+        },
+        {
+          title: 'Suivre la progression de chaque enfant',
+          text: 'Notez quelques mots après la séance : l’IA les transforme en suivi clair et lisible, prêt à partager avec l’enfant et sa famille.'
+        }
       ],
-      nextSteps: [
-        'Créer une trame de séance réutilisable',
-        'Formaliser un bilan court après chaque cycle'
-      ],
-      aiUses: ['Différencier une séance', 'Créer des variantes', 'Rédiger un bilan'],
-      prompt: 'Prépare une séance d’une heure pour huit enfants, niveau orange, objectif service.',
+      prompt: 'Prépare une séance d’une heure pour 8 enfants de 7-8 ans, niveau orange, objectif : le service. Propose 3 exercices ludiques et une variante pour les plus avancés.',
       stats: [
-        { value: '87 %', label: 'encadrent l’école de tennis' },
-        { value: '68 %', label: 'encadrent le mini-tennis' }
+        { value: '87 %', label: 'des personnes interrogées encadrent l’école de tennis', source: NA_2024 },
+        { value: '68 %', label: 'encadrent le mini-tennis', source: NA_2024 },
+        { label: 'La transmission est décrite comme « la plus belle satisfaction » du métier', source: 'Rundstadler, 2025 (environ 40 entretiens, 12 clubs)' }
       ],
       axes: { terrainClub: -0.8, reperesExploration: 0.4, groupeIndividuel: -0.8 }
     },
@@ -45,21 +60,26 @@
       player: 'Novak Djokovic',
       image: 'assets/img/profils/coach.jpg',
       quote: 'Sur le court, c’est le résultat qui parle.',
-      intro: 'Vous recherchez des repères précis pour transformer l’observation en progression mesurable.',
-      strengths: ['Expertise technique', 'Analyse tactique', 'Exigence'],
-      watchouts: [
-        'Ne pas réduire la progression au résultat',
-        'Préserver une charge soutenable'
+      intro: 'Vous aimez transformer l’observation en progression mesurable, avec des repères précis.',
+      strengths: ['Expertise technique et tactique', 'Sens de la performance', 'Regard technique affûté'],
+      pistes: [
+        {
+          title: 'Individualiser les plans d’entraînement',
+          text: 'À partir du profil d’un joueur ou d’une joueuse (niveau, objectifs, calendrier), l’IA propose une base de plan que vous ajustez avec votre expertise.'
+        },
+        {
+          title: 'Tirer davantage de vos notes de match',
+          text: 'Collez vos observations ou vos statistiques : l’IA les organise et fait ressortir les axes de travail récurrents, en quelques secondes.'
+        },
+        {
+          title: 'Planifier la saison et la charge',
+          text: 'Tournois, périodes de travail, récupération : l’IA vous aide à bâtir un calendrier cohérent et à le réajuster quand le programme change.'
+        }
       ],
-      nextSteps: [
-        'Définir trois indicateurs par cycle',
-        'Partager un objectif simple avec le joueur'
-      ],
-      aiUses: ['Analyser des notes', 'Structurer un cycle', 'Préparer une routine mentale'],
-      prompt: 'À partir de mes notes de match, identifie trois axes et propose un cycle de quatre semaines.',
+      prompt: 'Voici mes notes sur le dernier match de mon élève de 15 ans : […]. Identifie 3 axes de travail et propose un cycle de 4 semaines.',
       stats: [
-        { value: '55 %', label: 'encadrent un centre jeunes' },
-        { value: '19,5 %', label: 'citent la préparation mentale' }
+        { value: '55 %', label: 'des personnes interrogées encadrent un centre d’entraînement jeunes', source: NA_2024 },
+        { value: '19,5 %', label: 'souhaitent se former à la préparation mentale, 16,6 % à la préparation physique', source: NA_2024 }
       ],
       axes: { terrainClub: -0.6, reperesExploration: -0.4, groupeIndividuel: 0.8 }
     },
@@ -70,20 +90,25 @@
       image: 'assets/img/profils/batisseur.jpg',
       quote: 'Je fais tourner le club.',
       intro: 'Vous reliez le terrain, l’équipe et le projet de club pour faire avancer le collectif.',
-      strengths: ['Vision d’ensemble', 'Coordination', 'Organisation'],
-      watchouts: [
-        'Protéger du temps de terrain',
-        'Ne pas absorber toutes les demandes'
+      strengths: ['Vision d’ensemble', 'Coordination d’équipe', 'Relais entre bénévoles, fédération et collectivité'],
+      pistes: [
+        {
+          title: 'Alléger les dossiers de subvention',
+          text: 'Donnez vos chiffres et vos objectifs : l’IA rédige une première version du projet sportif, que vous complétez avec votre connaissance du club.'
+        },
+        {
+          title: 'Garder une trace claire des réunions',
+          text: 'Dictez ou collez vos notes : l’IA en fait un compte rendu structuré, avec les décisions et la liste des actions à suivre.'
+        },
+        {
+          title: 'Piloter avec des outils simples',
+          text: 'Plannings des courts, répartition des groupes, tableau de bord mensuel : l’IA vous aide à les construire et à les mettre à jour plus vite.'
+        }
       ],
-      nextSteps: [
-        'Clarifier les responsabilités',
-        'Installer un tableau de bord mensuel'
-      ],
-      aiUses: ['Préparer un dossier', 'Résumer une réunion', 'Structurer un planning'],
-      prompt: 'Rédige la partie projet sportif d’un dossier de subvention.',
+      prompt: 'À partir de ces chiffres d’effectifs : […], rédige en une page la partie « projet sportif » du dossier de subvention municipale.',
       stats: [
-        { value: '12', label: 'clubs étudiés pour les rôles projet' },
-        { value: '9 %', label: 'des enseignants sont DES' }
+        { value: '12 clubs', label: 'étudiés : coordonner les projets et faire le lien avec la fédération y sont des rôles clés', source: 'Rundstadler, 2025' },
+        { value: '9 %', label: 'des personnes interrogées sont titulaires du DESJEPS', source: NA_2024 }
       ],
       axes: { terrainClub: 0.9, reperesExploration: -0.2, groupeIndividuel: -0.6 }
     },
@@ -92,23 +117,28 @@
       name: 'L’Entrepreneur',
       player: 'Serena Williams',
       image: 'assets/img/profils/entrepreneur.jpg',
-      quote: 'Mon planning, c’est mon chiffre d’affaires.',
-      intro: 'Vous transformez les besoins des pratiquants en offres concrètes et lisibles.',
-      strengths: ['Sens du service', 'Autonomie', 'Création d’offres'],
-      watchouts: [
-        'Ne pas multiplier les offres sans mesurer leur valeur',
-        'Sécuriser le cadre club et indépendant'
+      quote: 'Chaque créneau compte.',
+      intro: 'Vous construisez des cours et des stages qui répondent aux attentes de vos élèves.',
+      strengths: ['Sens du service', 'Autonomie', 'Capacité à proposer de nouveaux cours et stages'],
+      pistes: [
+        {
+          title: 'Faire connaître vos stages et vos cours',
+          text: 'Décrivez votre stage : l’IA rédige l’annonce pour le site du club, les réseaux sociaux ou un message aux familles, dans le ton que vous choisissez.'
+        },
+        {
+          title: 'Simplifier les rappels et les relances',
+          text: 'Confirmations d’inscription, rappels de paiement, messages de rentrée : l’IA vous prépare des modèles réutilisables en quelques minutes.'
+        },
+        {
+          title: 'Organiser votre planning sur plusieurs structures',
+          text: 'Listez vos créneaux et vos contraintes : l’IA vous aide à comparer plusieurs organisations possibles de votre semaine.'
+        }
       ],
-      nextSteps: [
-        'Suivre remplissage et fidélisation',
-        'Créer une offre test avant généralisation'
-      ],
-      aiUses: ['Rédiger une offre', 'Préparer une relance', 'Comparer des scénarios'],
-      prompt: 'Crée trois offres de stage pour adultes débutants.',
+      prompt: 'Propose 3 stages de vacances pour adultes débutants, avec pour chacun un texte d’annonce court et un message à envoyer aux membres du club.',
       stats: [
-        { value: '45 %', label: 'ont une activité libérale' },
-        { value: '26 %', label: 'travaillent dans plusieurs structures' },
-        { value: '82 %', label: 'encadrent des adultes loisirs' }
+        { value: '45 %', label: 'des personnes interrogées ont une part d’activité libérale', source: NA_2024 },
+        { value: '26 %', label: 'travaillent dans plusieurs structures', source: NA_2024 },
+        { value: '82 %', label: 'encadrent des adultes en tennis loisir', source: NA_2024 }
       ],
       axes: { terrainClub: 0.7, reperesExploration: 0.7, groupeIndividuel: 0.7 }
     },
@@ -119,20 +149,25 @@
       image: 'assets/img/profils/jeune-pro.jpg',
       quote: 'J’apprends tous les jours.',
       intro: 'Vous progressez par l’essai, l’observation et la recherche de nouvelles méthodes.',
-      strengths: ['Énergie', 'Curiosité', 'Aisance numérique'],
-      watchouts: [
-        'Éviter de changer trop vite de méthode',
-        'Transformer les essais en repères stables'
+      strengths: ['Énergie et curiosité', 'Aisance avec le numérique', 'Envie de se former'],
+      pistes: [
+        {
+          title: 'Réviser et préparer vos examens',
+          text: 'L’IA peut vous interroger sur le programme de votre diplôme, vous expliquer une notion autrement ou corriger un écrit d’entraînement.'
+        },
+        {
+          title: 'Construire votre banque d’exercices',
+          text: 'Pour chaque objectif (service, déplacement, jeu au filet), l’IA vous propose des exercices commentés que vous testez et classez au fil des séances.'
+        },
+        {
+          title: 'Vous préparer aux situations délicates',
+          text: 'Entraînez-vous à répondre à un parent mécontent ou à gérer un groupe agité : l’IA joue le rôle, vous testez vos réponses en toute tranquillité.'
+        }
       ],
-      nextSteps: [
-        'Conserver un journal de séance',
-        'Demander un retour ciblé à un pair'
-      ],
-      aiUses: ['Réviser', 'Créer des exercices', 'Simuler une situation'],
-      prompt: 'Joue un parent mécontent afin que je m’entraîne à lui répondre.',
+      prompt: 'Joue le rôle d’un parent mécontent que son enfant ne passe pas en groupe compétition. Je m’entraîne à lui répondre.',
       stats: [
-        { value: '30 %', label: 'ont entre 18 et 30 ans' },
-        { value: '69 %', label: 'ont un projet diplômant' }
+        { value: '30 %', label: 'des personnes interrogées ont entre 18 et 30 ans', source: NA_2024 },
+        { value: '69 %', label: 'des 18-30 ans ont un projet de formation diplômante', source: NA_2024 }
       ],
       axes: { terrainClub: -0.3, reperesExploration: 0.9, groupeIndividuel: -0.2 }
     },
@@ -142,21 +177,26 @@
       player: 'Roger Federer',
       image: 'assets/img/profils/sage.jpg',
       quote: 'Montrez-moi que ça marche.',
-      intro: 'Vous vous appuyez sur l’expérience et retenez les nouveautés qui apportent une valeur claire.',
-      strengths: ['Expérience', 'Recul', 'Transmission'],
-      watchouts: [
-        'Ne pas écarter une nouveauté avant un test court',
-        'Rendre vos savoir-faire transmissibles'
+      intro: 'Vous vous appuyez sur l’expérience et retenez les nouveautés qui apportent une vraie valeur.',
+      strengths: ['Expérience et recul', 'Fidélité des membres du club', 'Transmission aux jeunes collègues'],
+      pistes: [
+        {
+          title: 'Mettre votre savoir-faire au propre',
+          text: 'Vos progressions et vos méthodes qui fonctionnent depuis des années : l’IA vous aide à les mettre en forme en fiches claires.'
+        },
+        {
+          title: 'Parler au lieu d’écrire',
+          text: 'Pas besoin de tout réapprendre : vous dictez à voix haute, l’IA rédige le texte. Idéal pour la paperasse et les comptes rendus.'
+        },
+        {
+          title: 'Transmettre à l’équipe',
+          text: 'Transformez votre expérience en supports simples pour les jeunes collègues : fiches de séance, conseils, repères de progression.'
+        }
       ],
-      nextSteps: [
-        'Formaliser une méthode qui fonctionne',
-        'Tester un usage nouveau sur une tâche précise'
-      ],
-      aiUses: ['Mettre au propre', 'Dicter une trame', 'Capitaliser une méthode'],
-      prompt: 'Mets au propre ma progression pédagogique en une fiche.',
+      prompt: 'Je te dicte ma progression pour enseigner le revers à une main : […]. Mets-la au propre en une fiche d’une page pour mes jeunes collègues.',
       stats: [
-        { value: '24 %', label: 'ont 51 ans et plus' },
-        { value: '79 %', label: 'sont sans projet diplômant' }
+        { value: '24 %', label: 'des personnes interrogées ont 51 ans et plus', source: NA_2024 },
+        { label: 'Avec l’expérience, on apprend d’abord par la pratique, sur le terrain', source: 'Cortela et al., 2022 ; Anderson et al., 2021' }
       ],
       axes: { terrainClub: -0.4, reperesExploration: -0.9, groupeIndividuel: 0.1 }
     }

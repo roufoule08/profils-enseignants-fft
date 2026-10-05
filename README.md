@@ -1,9 +1,13 @@
-# Colloque des Enseignants — Quel profil tennis êtes-vous ?
+# Colloque des Enseignants — Quel profil enseignant êtes-vous ?
 
-Questionnaire ludique pour les enseignants de tennis : 10 questions, un portrait
+Questionnaire ludique pour les enseignantes et enseignants de tennis, conçu pour l'atelier
+« L'IA au service des enseignants ». 10 questions, un portrait
 parmi six profils (Le Passeur, Le Coach de compétition, Le Bâtisseur,
 L'Entrepreneur, Le Jeune Pro, Le Sage) et une vue « La salle » qui montre la
 répartition anonyme des profils.
+
+Le portrait propose 3 pistes concrètes où l'IA peut faciliter le travail, sans jamais
+remplacer le savoir-faire de l'enseignant ou de l'enseignante.
 
 > Outil d'animation : ce n'est ni un test psychométrique ni une évaluation professionnelle.
 
@@ -42,23 +46,27 @@ tests/
 
 | Je veux…                               | Fichier à modifier             |
 |----------------------------------------|--------------------------------|
-| Changer un texte de profil             | `assets/js/data/profiles.js`   |
+| Changer un texte de profil, une piste IA ou un chiffre | `assets/js/data/profiles.js` |
 | Changer une question ou une réponse    | `assets/js/data/questions.js`  |
 | Changer les points d'une réponse       | `assets/js/data/questions.js` (champ `points`) |
 | Changer un texte d'interprétation d'axe| `assets/js/data/axes.js`       |
 | Changer une photo                      | Remplacer le fichier dans `assets/img/profils/` (même nom, JPG de 1400 px maximum) |
+| Changer un niveau IA et son message    | `assets/js/data/questions.js` (fin du fichier) |
 | Changer les couleurs                   | Variables en haut de `assets/css/styles.css` |
 
 On peut ajouter ou retirer des questions : le compteur, la barre de progression
 et le calcul s'adaptent automatiquement.
+
+**Règles d'écriture** : un verbe en tête de chaque réponse, des formulations valables pour
+les femmes comme pour les hommes, un ton toujours valorisant et jamais critique.
 
 **Après chaque modification, ouvrir `tests/index.html` : tout doit être vert.**
 
 ## Comment le portrait est calculé
 
 1. Chaque réponse rapporte des points à un ou plusieurs profils (voir `questions.js`).
-2. Le profil qui a le plus de points est le profil dominant, et le suivant est le profil secondaire.
-   En cas d'égalité, le profil choisi à la question « Votre légitimité vient d'abord de… » passe devant.
+2. Le profil qui a le plus de points est le profil principal, et le suivant est le profil secondaire.
+   En cas d'égalité, le profil choisi à la question « Votre principal atout dans le métier ? » passe devant.
    Si l'égalité persiste, c'est l'ordre des profils qui décide.
 3. Chaque axe (Terrain/Club, Repères/Exploration, Groupe/Individuel) est la moyenne
    des positions des profils, pondérée par leurs points.

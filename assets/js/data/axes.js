@@ -22,9 +22,9 @@
       right: 'Club',
       code: { left: 'T', right: 'K' },
       texts: {
-        left: 'Votre résultat indique une forte orientation terrain : vous tirez votre énergie de la séance, de l’observation et du contact direct avec les pratiquants.',
-        right: 'Votre résultat indique une orientation club : vous êtes à l’aise pour structurer l’activité au-delà du court.',
-        balanced: 'Vous combinez de façon équilibrée présence sur le terrain et contribution au projet de club.'
+        left: 'Vous tirez votre énergie de la séance, de l’observation et du contact direct avec vos élèves.',
+        right: 'Vous êtes à l’aise pour faire vivre l’activité au-delà du court : organisation, projets, vie du club.',
+        balanced: 'Vous combinez présence sur le terrain et contribution au projet du club.'
       }
     },
     {
@@ -34,9 +34,9 @@
       right: 'Exploration',
       code: { left: 'R', right: 'X' },
       texts: {
-        left: 'Vous privilégiez les repères éprouvés. Cette stabilité sécurise votre pratique, à condition de garder un espace de test limité pour les nouveautés.',
-        right: 'Vous aimez explorer. Cette curiosité stimule votre progression, à condition de transformer les essais concluants en routines.',
-        balanced: 'Vous alternez repères et exploration selon le contexte.'
+        left: 'Vos méthodes éprouvées sont un socle solide : l’IA peut vous aider à les formaliser et à les partager.',
+        right: 'Vous aimez essayer de nouvelles approches : l’IA peut vous aider à garder une trace de ce qui fonctionne.',
+        balanced: 'Vous alternez méthodes éprouvées et nouvelles idées selon le contexte.'
       }
     },
     {
@@ -46,9 +46,9 @@
       right: 'Individuel',
       code: { left: 'G', right: 'I' },
       texts: {
-        left: 'Votre approche est collective : vous cherchez la dynamique du groupe et la transmission partagée.',
-        right: 'Votre approche est plus individualisée : vous adaptez volontiers le suivi à une personne ou à un objectif précis.',
-        balanced: 'Vous passez volontiers de la dynamique de groupe au suivi individuel selon les besoins des pratiquants.'
+        left: 'Vous aimez faire vivre la dynamique du groupe et partager vos savoir-faire.',
+        right: 'Vous aimez adapter votre accompagnement à chaque personne et à ses objectifs.',
+        balanced: 'Vous passez volontiers de la dynamique de groupe au suivi individuel, selon les besoins.'
       }
     }
   ]);

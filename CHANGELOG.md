@@ -1,5 +1,39 @@
 # Journal des modifications
 
+## Mise à jour 2 : textes, questions et portrait
+
+Les points de chaque réponse sont inchangés : le calcul du profil reste identique,
+ce qui est vérifié par les tests.
+
+### Accueil
+- La photo de Yannick Noah est cadrée à droite sur grand écran : le joueur n'est plus caché par le dégradé.
+- Le logo texte « FFT · PROFILS » est retiré de l'en-tête.
+- Le titre devient « Quel profil enseignant êtes-vous ? ».
+- L'accroche est recentrée sur l'IA comme aide, et non comme remplacement. « Points de vigilance » disparaît.
+- Le pied de page ajoute la mention obligatoire sur les joueurs et joueuses cités.
+
+### Questionnaire
+- Les boutons deviennent « Servir le prochain point » et « Rejouer le point d'avant ».
+- Les 10 questions sont réécrites :
+  - un verbe en tête de chaque réponse ;
+  - des formulations valables pour les femmes comme pour les hommes ;
+  - plus de termes « marketing » ;
+  - des réponses mieux différenciées à la question 4.
+- Les questions 9 et 10 sur l'IA sont plus précises, pour mieux exploiter les réponses :
+  - la question 9 mesure une fréquence (jamais, une ou deux fois, quelques fois par mois, chaque semaine, tous les jours) ;
+  - la question 10 porte sur l'usage principal.
+
+### Portrait
+- Le bloc « Points de vigilance » est supprimé, car il pouvait être perçu comme une critique.
+- Nouveau bloc « 3 pistes où l'IA peut vous faciliter le travail » : trois propositions concrètes par profil.
+- Nouveau bloc « Votre rapport à l'IA » : une échelle en 5 cases et un message encourageant.
+  Les niveaux sont renommés pour décrire un usage plutôt qu'une personne :
+  Découverte, Premiers pas, Usage occasionnel, Usage régulier, Usage avancé.
+- Le prompt de démarrage est plus concret, avec un bouton « Copier le prompt ».
+- Nouveau bloc « Repères chiffrés sur le métier » : chaque chiffre a sa source (enquête Nouvelle-Aquitaine 2024, Rundstadler 2025…).
+- Les textes des axes sont réécrits dans un ton valorisant.
+- 5 tests ont été ajoutés, pour un total de 25.
+
 ## Étape 1 : refonte du code et correction des bugs
 
 Le site garde le même aspect et le même contenu, et calcule le même portrait

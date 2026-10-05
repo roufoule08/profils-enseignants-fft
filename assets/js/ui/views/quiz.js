@@ -40,9 +40,9 @@
           <h1 class="question" id="question-title" tabindex="-1">${question.text}</h1>
           <div class="answers" role="group" aria-labelledby="question-title">${answers}</div>
           <div class="qnav">
-            <button type="button" class="btn back" data-action="prev" ${quiz.index === 0 ? 'disabled' : ''}>Précédent</button>
+            <button type="button" class="btn back" data-action="prev" ${quiz.index === 0 ? 'disabled' : ''}>Rejouer le point d’avant</button>
             <button type="button" class="btn" data-action="next" ${selected == null ? 'disabled' : ''}>
-              ${isLast ? 'Voir mon portrait' : 'Suivant'}
+              ${isLast ? 'Voir mon portrait' : 'Servir le prochain point'}
             </button>
           </div>
         </div>
