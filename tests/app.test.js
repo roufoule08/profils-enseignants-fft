@@ -233,6 +233,18 @@
     }
   });
 
+  test('Calcul : les mêmes réponses donnent toujours le même portrait (2 × 5 000 questionnaires)', function () {
+    var rand = seededRandom(2026);
+    for (var n = 0; n < 5000; n++) {
+      var answers = randomAnswers(rand);
+      var first = App.scoring.computeResult(answers.slice());
+      var second = App.scoring.computeResult(answers.slice());
+      assertEqual(second, first, 'Réponses ' + JSON.stringify(answers));
+      var r1 = App.storage.createRecord(first), r2 = App.storage.createRecord(second);
+      assertEqual(App.views.result(r2).toString(), App.views.result(r1).toString(), 'Affichage ' + JSON.stringify(answers));
+    }
+  });
+
   test('Calcul : bornes des indicateurs (0 et 100 %)', function () {
     var gestion = App.data.getIndicator('gestion');
     var essai = App.data.getIndicator('essai');
@@ -386,7 +398,7 @@
     assert(out.indexOf('Rejouer le point d’avant') >= 0, 'Bouton précédent');
   });
 
-  test('Affichage : le portrait montre les 3 indicateurs, leur palier, leur texte et leur lien', function () {
+  test('Affichage : le portrait montre les 3 indicateurs, leur palier et leur texte', function () {
     var record = newRecord([0, 0, 0, 4, 0, 1, 4, 0, 2, 0]);
     var out = App.views.result(record).toString();
     assert(out.indexOf('Vos 3 indicateurs') >= 0, 'Titre du bloc');
@@ -396,7 +408,6 @@
       assert(out.indexOf(App.ui.escapeHtml(ind.name)) >= 0, ind.key + ' : nom');
       assert(out.indexOf(App.ui.escapeHtml(level.texte)) >= 0, ind.key + ' : texte du palier');
       assert(out.indexOf(ind.showPercent ? value + ' %' : App.ui.escapeHtml(level.libelle)) >= 0, ind.key + ' : valeur affichée');
-      if (level.lien) assert(out.indexOf('href="' + level.lien + '"') >= 0, ind.key + ' : lien');
     });
   });
 
@@ -407,10 +418,9 @@
     assertEqual((out.match(/class="piste"/g) || []).length, 3, 'Pistes');
     assert(out.indexOf('Votre cas d’usage pour démarrer') >= 0, 'Titre du cas d’usage');
     assert(out.indexOf('data-action="copy-prompt"') >= 0, 'Bouton copier');
-    assert(out.indexOf(p.useCase.id) >= 0 && out.indexOf(App.ui.escapeHtml(p.useCase.title)) >= 0, 'Cas d’usage de la bibliothèque');
     assert(out.indexOf('href="' + App.data.links.promptLibrary + '#' + p.useCase.libraryPage + '"') >= 0, 'Lien vers la page du profil dans la bibliothèque');
     assert(out.indexOf(App.ui.escapeHtml(p.statsIntro)) >= 0, 'Phrase de lien avec le profil');
-    assert(out.indexOf(App.ui.escapeHtml(p.stats[0].source)) >= 0, 'Source des chiffres');
+    assert(out.indexOf('Sources : ' + App.ui.escapeHtml(p.stats[0].source)) >= 0, 'Sources réunies en une ligne');
     assert(out.indexOf('href="#methode"') >= 0, 'Lien vers Sources et méthode');
   });
 
@@ -420,6 +430,36 @@
     assert(!/[TK]-[RX]-[GI]/.test(out), 'Code à 3 lettres retiré');
     assert(out.indexOf('Votre rapport à l’IA') < 0, 'Bloc « Votre rapport à l’IA » retiré');
     assert(out.indexOf('vigilance') < 0, 'Plus de « points de vigilance »');
+  });
+
+  test('Affichage : le portrait ne contient que 2 liens (bibliothèque et sources) (D-23)', function () {
+    App.data.profiles.forEach(function (p) {
+      var computed = App.scoring.computeResult(questions.map(function () { return 0; }));
+      computed.profile = p.id;
+      var out = App.views.result(App.storage.createRecord(computed)).toString();
+      var links = out.match(/<a [^>]*href="[^"]+"/g) || [];
+      assertEqual(links.length, 2, p.id + ' : ' + links.join(' | '));
+    });
+  });
+
+  test('Affichage : plus de familles, de code de cas d’usage ni de liens d’indicateurs (D-24)', function () {
+    var record = newRecord([0, 0, 0, 4, 0, 1, 4, 0, 2, 0]);
+    var p = App.data.getProfile(record.profile);
+    var pages = [App.views.home().toString(), App.views.result(record).toString()];
+    Object.keys(App.data.families).forEach(function (code) {
+      var fam = App.ui.escapeHtml(App.data.families[code].name);
+      pages.forEach(function (page) { assert(page.indexOf(fam) < 0, 'Famille affichée : ' + fam); });
+    });
+    assert(pages[1].indexOf(p.useCase.id) < 0, 'Code du cas d’usage affiché');
+    App.data.indicators.forEach(function (ind) {
+      ind.levels.forEach(function (l) { if (l.lien) assert(pages[1].indexOf(l.lien + '"') < 0, 'Lien d’indicateur : ' + l.lien); });
+    });
+  });
+
+  test('Contenu : les phrases « Ce profil dans la profession » parlent du profil, pas de la personne (D-25)', function () {
+    App.data.profiles.forEach(function (p) {
+      assert(!/\b(vous|votre|vos)\b/i.test(p.statsIntro), p.id + ' : ' + p.statsIntro);
+    });
   });
 
   test('Affichage : la bibliothèque de prompts est celle du référentiel', function () {
@@ -465,9 +505,9 @@
 
   test('Inclusion : les noms des profils s’affichent toujours sous les deux formes', function () {
     var p = App.data.getProfile('passeur');
-    assertEqual(App.data.profileName(p), 'Le Passeur · La Passeuse');
-    assert(App.views.result(newRecord()).toString().indexOf('Le Passeur · La Passeuse') >= 0, 'Portrait');
-    assert(App.views.home().toString().indexOf('Le Passeur · La Passeuse') >= 0, 'Accueil');
+    assertEqual(App.data.profileName(p), 'Le ou la Pédagogue');
+    assert(App.views.result(newRecord()).toString().indexOf('Le ou la Pédagogue') >= 0, 'Portrait');
+    assert(App.views.home().toString().indexOf('Le ou la Pédagogue') >= 0, 'Accueil');
   });
 
   test('Inclusion : plus aucune question sur le genre', function () {
@@ -494,7 +534,9 @@
 
   test('Sources et méthode : 11 sources, la méthode et les limites', function () {
     var out = App.views.methode().toString();
-    assertEqual((out.match(/<tr>/g) || []).length, 1 + 11, 'En-tête + 11 sources');
+    var sourcesHtml = (out.match(/<ul class="sources">[\s\S]*?<\/ul>/g) || []).join('');
+    assertEqual((sourcesHtml.match(/<li>/g) || []).length, 11, '11 sources');
+    assertEqual((out.match(/<h3>/g) || []).length, 3, '3 groupes de sources par sujet');
     assert(out.indexOf('Les limites') >= 0 && out.indexOf('La méthode') >= 0);
     assert(out.indexOf('dimensions') < 0, 'Plus de mention des dimensions supprimées');
   });

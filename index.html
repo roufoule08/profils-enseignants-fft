@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Roboto+Flex:wght@400;600;700&display=swap">
-  <link rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/styles.css?v=8">
 </head>
 <body>
   <a class="skip-link" href="#app">Aller au contenu</a>
@@ -34,6 +34,9 @@
   <footer class="footer">
     <p>Outil ludique d’animation, appuyé sur des études : ce n’est ni un test psychométrique ni une évaluation professionnelle.<br>
     Les joueurs et joueuses cités illustrent des traits publics ; aucune citation ne leur est attribuée.</p>
+    <!-- Numéro de version : le même que le ?v= des fichiers ci-dessus. Il permet de vérifier
+         que deux personnes utilisent bien la même version du site. -->
+    <p class="footer-version">Version 8</p>
     <p class="footer-links">
       <a href="#methode">Sources et méthode</a>
       <a href="https://www.fft.fr/mention-legales-et-cgu" target="_blank" rel="noopener">Mentions légales FFT</a>
@@ -41,22 +44,25 @@
     </p>
   </footer>
 
-  <!-- L'ordre compte : données, puis outils, puis pages, puis l'application. -->
-  <script src="assets/js/data/referentiel.js" defer></script>
-  <script src="assets/js/data/profiles.js" defer></script>
-  <script src="assets/js/data/questions.js" defer></script>
-  <script src="assets/js/data/indicators.js" defer></script>
-  <script src="assets/js/data/links.js" defer></script>
-  <script src="assets/js/data/methode.js" defer></script>
-  <script src="assets/js/ui/html.js" defer></script>
-  <script src="assets/js/core/scoring.js" defer></script>
-  <script src="assets/js/core/storage.js" defer></script>
-  <script src="assets/js/core/router.js" defer></script>
-  <script src="assets/js/ui/views/home.js" defer></script>
-  <script src="assets/js/ui/views/quiz.js" defer></script>
-  <script src="assets/js/ui/views/result.js" defer></script>
-  <script src="assets/js/ui/views/room.js" defer></script>
-  <script src="assets/js/ui/views/methode.js" defer></script>
-  <script src="assets/js/app.js" defer></script>
+  <!-- L'ordre compte : données, puis outils, puis pages, puis l'application.
+       ?v=8 : numéro de la mise à jour. À augmenter à chaque publication, avec le
+       numéro du pied de page, pour que les navigateurs rechargent tous les fichiers
+       (sinon un téléphone peut mélanger ancienne et nouvelle version). -->
+  <script src="assets/js/data/referentiel.js?v=8" defer></script>
+  <script src="assets/js/data/profiles.js?v=8" defer></script>
+  <script src="assets/js/data/questions.js?v=8" defer></script>
+  <script src="assets/js/data/indicators.js?v=8" defer></script>
+  <script src="assets/js/data/links.js?v=8" defer></script>
+  <script src="assets/js/data/methode.js?v=8" defer></script>
+  <script src="assets/js/ui/html.js?v=8" defer></script>
+  <script src="assets/js/core/scoring.js?v=8" defer></script>
+  <script src="assets/js/core/storage.js?v=8" defer></script>
+  <script src="assets/js/core/router.js?v=8" defer></script>
+  <script src="assets/js/ui/views/home.js?v=8" defer></script>
+  <script src="assets/js/ui/views/quiz.js?v=8" defer></script>
+  <script src="assets/js/ui/views/result.js?v=8" defer></script>
+  <script src="assets/js/ui/views/room.js?v=8" defer></script>
+  <script src="assets/js/ui/views/methode.js?v=8" defer></script>
+  <script src="assets/js/app.js?v=8" defer></script>
 </body>
 </html>

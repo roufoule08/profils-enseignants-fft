@@ -13,18 +13,34 @@
   App.data.methode = Object.freeze({
     intro: 'Les profils croisent des données chiffrées et des études qualitatives : plus de 1 000 enseignants et enseignantes de tennis dans 6 études, complétées par 5 sources de cadrage.',
 
-    sources: [
-      { name: 'Enquête métier, Ligue de Nouvelle-Aquitaine, 2024', type: 'Quantitative', volume: '729 éducateurs, 394 clubs', apport: 'Âge, sexe, diplômes, statuts, publics encadrés, besoins de formation' },
-      { name: 'Rundstadler, 2025', type: 'Qualitative', volume: 'Environ 40 entretiens, 12 clubs', apport: '3 rôles (relais fédéral, gestionnaire de projets, animateur associatif) et 3 stratégies d’identité' },
-      { name: 'Rundstadler, 1999', type: 'Qualitative', volume: '5 clubs', apport: '3 logiques d’action : professionnelle, associative, fédérale' },
-      { name: 'Cortela et al., 2022', type: 'Quantitative', volume: '104 enseignants', apport: 'Rapport à la formation selon l’expérience' },
-      { name: 'Kiamouri et al., 2024', type: 'Quantitative', volume: '106 enseignants', apport: 'Motivation, engagement, bien-être' },
-      { name: 'Hewitt et Edwards', type: 'Qualitative', volume: '12 enseignants observés', apport: 'Styles pédagogiques dominants' },
-      { name: 'Anderson et al., 2021', type: 'Qualitative', volume: '10 entraîneurs', apport: 'Conception des séances, apprentissage par l’expérience' },
-      { name: 'UK Coaching, 2022', type: 'Quantitative', volume: 'Enquête nationale', apport: 'Motivations, freins, usage du numérique' },
-      { name: 'INSEE, 2022', type: 'Cadrage', volume: '141 000 éducateurs sportifs', apport: '5 trajectoires d’emploi' },
-      { name: 'Observatoire des métiers du sport, 2024', type: 'Cadrage', volume: '155 945 salariés', apport: 'Temps partiel, multi-employeurs, horaires' },
-      { name: 'FFT et CDES, 2025', type: 'Cadrage', volume: 'Filière tennis', apport: 'Emplois salariés et indépendants' }
+    // Sources regroupées par sujet, de la plus utilisée dans les portraits à la moins utilisée (D-23).
+    sourceGroups: [
+      {
+        title: 'Les chiffres de votre portrait',
+        sources: [
+          { name: 'Enquête métier, Ligue de Nouvelle-Aquitaine, 2024', type: 'Quantitative', volume: '729 éducateurs, 394 clubs', apport: 'Âge, sexe, diplômes, statuts, publics encadrés, besoins de formation' },
+          { name: 'Rundstadler, 2025', type: 'Qualitative', volume: 'Environ 40 entretiens, 12 clubs', apport: '3 rôles (relais fédéral, gestionnaire de projets, animateur associatif) et 3 stratégies d’identité' },
+          { name: 'Cortela et al., 2022', type: 'Quantitative', volume: '104 enseignants', apport: 'Rapport à la formation selon l’expérience' },
+          { name: 'Anderson et al., 2021', type: 'Qualitative', volume: '10 entraîneurs', apport: 'Conception des séances, apprentissage par l’expérience' }
+        ]
+      },
+      {
+        title: 'Les façons d’enseigner et de s’impliquer',
+        sources: [
+          { name: 'Rundstadler, 1999', type: 'Qualitative', volume: '5 clubs', apport: '3 logiques d’action : professionnelle, associative, fédérale' },
+          { name: 'Hewitt et Edwards', type: 'Qualitative', volume: '12 enseignants observés', apport: 'Styles pédagogiques dominants' },
+          { name: 'Kiamouri et al., 2024', type: 'Quantitative', volume: '106 enseignants', apport: 'Motivation, engagement, bien-être' },
+          { name: 'UK Coaching, 2022', type: 'Quantitative', volume: 'Enquête nationale', apport: 'Motivations, freins, usage du numérique' }
+        ]
+      },
+      {
+        title: 'Le contexte de l’emploi',
+        sources: [
+          { name: 'INSEE, 2022', type: 'Cadrage', volume: '141 000 éducateurs sportifs', apport: '5 trajectoires d’emploi' },
+          { name: 'Observatoire des métiers du sport, 2024', type: 'Cadrage', volume: '155 945 salariés', apport: 'Temps partiel, multi-employeurs, horaires' },
+          { name: 'FFT et CDES, 2025', type: 'Cadrage', volume: 'Filière tennis', apport: 'Emplois salariés et indépendants' }
+        ]
+      }
     ],
 
     steps: [

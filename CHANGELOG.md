@@ -1,5 +1,21 @@
 # Journal des modifications
 
+## Mise à jour 8 : un portrait plus clair, plus court, toujours identique
+
+- **Test « mêmes réponses, même portrait »** :
+  - 2 × 5 000 calculs et 2 × 150 parcours réels au clic (avec retours en arrière) donnent toujours exactement le même portrait ;
+  - l'écart constaté venait de deux versions différentes du site ;
+  - chaque fichier porte désormais un numéro de version (« Version 8 » en bas de page), pour qu'un navigateur ne puisse plus mélanger ancienne et nouvelle version. (D-27)
+- **« Le Passeur · La Passeuse » devient « Le ou la Pédagogue »**, un nom plus parlant. (D-26)
+- **Familles retirées de l'affichage** (« Sur le court », « Autour du court », « Trajectoires »). (D-24)
+- **« Votre cas d'usage pour démarrer »** : la ligne technique « Cas d'usage COM-01 de la bibliothèque… » est retirée. Il reste le prompt, « Copier le prompt » et un seul lien. (D-24)
+- **Moins de liens dans le portrait** : il n'y en a plus que 2, la bibliothèque et Sources et méthode.
+  Les liens des indicateurs sont retirés, et les sources des chiffres sont réunies en une ligne. (D-23)
+- **« Ce profil dans la profession »** remplace « Pourquoi ce profil vous ressemble ».
+  Les phrases parlent du profil et plus de la personne, ce qui évite qu'une personne qui débute lise des chiffres sur les plus de 51 ans comme s'ils la concernaient. (D-25)
+- **Sources et méthode** : la méthode vient en premier, puis les sources regroupées en 3 sujets, puis les limites.
+- 4 tests ont été ajoutés, pour un total de 48.
+
 ## Mise à jour 7 : un vrai cas d'usage de la bibliothèque pour chaque profil
 
 - « Votre cas d'usage pour démarrer » affiche le cas d'usage de la bibliothèque de prompts qui correspond au profil,

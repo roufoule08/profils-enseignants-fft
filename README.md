@@ -2,7 +2,7 @@
 
 Questionnaire ludique pour les enseignantes et enseignants de tennis, conçu pour l'atelier
 « L'IA au service des enseignants ». 10 questions, un portrait
-parmi six profils (Le Passeur · La Passeuse, Le ou la Coach de compétition,
+parmi six profils (Le ou la Pédagogue, Le ou la Coach de compétition,
 Le Bâtisseur · La Bâtisseuse, L'Entrepreneur · L'Entrepreneuse, Le ou la Jeune Pro,
 Le ou la Sage) et une vue « La salle » qui montre la
 répartition anonyme des profils.
@@ -79,6 +79,12 @@ les femmes comme pour les hommes, un ton toujours valorisant et jamais critique.
 Tout changement de texte ou de calcul par rapport au référentiel doit être ajouté dans `DECISIONS.md`.
 
 **Après chaque modification, ouvrir `tests/index.html` : tout doit être vert.**
+
+## Publier une nouvelle version
+
+Dans `index.html`, augmenter le numéro `?v=` de tous les fichiers (rechercher-remplacer, par exemple `?v=8` → `?v=9`)
+et le numéro « Version » du pied de page. Sans cela, certains téléphones peuvent garder une partie de
+l'ancienne version en mémoire et afficher un portrait différent pour les mêmes réponses.
 
 ## Comment le portrait est calculé
 

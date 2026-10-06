@@ -18,7 +18,8 @@
  *               { id, title, libraryPage : ancre de la page du profil dans la bibliothèque }
  *               (relevé dans la bibliothèque le 5 octobre 2026, DECISIONS.md D-22)
  *   prompt    : consigne prête à copier pour un premier essai
- *   statsIntro: phrase qui relie les chiffres au profil
+ *   statsIntro: phrase qui situe le profil dans la profession. Elle parle du profil,
+ *               jamais de la personne (qui peut avoir ce profil à tout âge, D-25)
  *   stats     : repères chiffrés issus des études { value, label, source }
  */
 (function (App) {
@@ -32,7 +33,7 @@
     {
       id: 'passeur',
       family: 'court',
-      names: { m: 'Le Passeur', f: 'La Passeuse', both: 'Le Passeur · La Passeuse' },
+      names: { m: 'Le Pédagogue', f: 'La Pédagogue', both: 'Le ou la Pédagogue' },
       player: 'Yannick Noah',
       image: 'assets/img/profils/passeur.jpg',
       quote: 'Ma fierté, c’est de les voir progresser.',
@@ -54,7 +55,7 @@
       ],
       useCase: { id: 'SEA-01', title: 'Préparer une séance d’école de tennis', libraryPage: 'p-passeur' },
       prompt: 'Prépare une séance d’une heure pour 8 enfants de 7-8 ans, niveau orange, objectif : le service. Propose 3 exercices ludiques et une variante pour les plus avancés.',
-      statsIntro: 'Votre profil est au cœur du métier : faire progresser les plus jeunes est le quotidien de la grande majorité de la profession.',
+      statsIntro: 'Ce profil est au cœur du métier : faire progresser les plus jeunes fait partie du quotidien de la grande majorité de la profession.',
       stats: [
         { value: '87 %', label: 'des personnes interrogées encadrent l’école de tennis', source: NA_2024 },
         { value: '68 %', label: 'encadrent le mini-tennis', source: NA_2024 },
@@ -86,7 +87,7 @@
       ],
       useCase: { id: 'COM-01', title: 'Tirer 3 axes de travail d’un match', libraryPage: 'p-coach-de-competition' },
       prompt: 'Voici mes notes sur le dernier match de mon élève de 15 ans : […]. Identifie 3 axes de travail et propose un cycle de 4 semaines.',
-      statsIntro: 'La compétition fait partie du quotidien d’une grande partie de la profession, et vos envies de formation sont largement partagées.',
+      statsIntro: 'La compétition occupe une grande partie de la profession, et les envies de formation de ce profil sont largement partagées.',
       stats: [
         { value: '55 %', label: 'des personnes interrogées encadrent un centre d’entraînement jeunes', source: NA_2024 },
         { value: '19,5 %', label: 'souhaitent se former à la préparation mentale, 16,6 % à la préparation physique', source: NA_2024 }
@@ -148,7 +149,7 @@
       ],
       useCase: { id: 'OFF-01', title: 'Créer une offre de stage de vacances', libraryPage: 'p-entrepreneur' },
       prompt: 'Propose 3 stages de vacances pour adultes débutants, avec pour chacun un texte d’annonce court et un message à envoyer aux membres du club.',
-      statsIntro: 'Votre façon de travailler, entre plusieurs structures et une activité indépendante, est celle d’une large part de la profession.',
+      statsIntro: 'Travailler entre plusieurs structures, avec une part d’activité indépendante, est courant dans la profession.',
       stats: [
         { value: '45 %', label: 'des personnes interrogées ont une part d’activité libérale', source: NA_2024 },
         { value: '26 %', label: 'travaillent dans plusieurs structures', source: NA_2024 },
@@ -180,7 +181,7 @@
       ],
       useCase: { id: 'FOR-02', title: 'S’entraîner à une situation difficile', libraryPage: 'p-jeune-pro' },
       prompt: 'Joue le rôle d’un parent mécontent que son enfant ne passe pas en groupe compétition. Je m’entraîne à lui répondre.',
-      statsIntro: 'Vous faites partie d’une génération nombreuse, qui se forme activement.',
+      statsIntro: 'Ce profil se reconnaît à sa façon d’apprendre en continu, quel que soit l’âge. Dans la profession, c’est aussi une génération nombreuse qui se forme activement.',
       stats: [
         { value: '30 %', label: 'des personnes interrogées ont entre 18 et 30 ans', source: NA_2024 },
         { value: '69 %', label: 'des 18-30 ans ont un projet de formation diplômante', source: NA_2024 }
@@ -198,7 +199,7 @@
       pistes: [
         {
           title: 'Mettre votre savoir-faire au propre',
-          text: 'Vos progressions et vos méthodes qui fonctionnent depuis des années : l’IA vous aide à les mettre en forme en fiches claires.'
+          text: 'Vos progressions et vos méthodes qui ont fait leurs preuves : l’IA vous aide à les mettre en forme en fiches claires.'
         },
         {
           title: 'Parler au lieu d’écrire',
@@ -206,12 +207,12 @@
         },
         {
           title: 'Transmettre à l’équipe',
-          text: 'Transformez votre expérience en supports simples pour les jeunes collègues : fiches de séance, conseils, repères de progression.'
+          text: 'Transformez vos méthodes en supports simples pour vos collègues : fiches de séance, conseils, repères de progression.'
         }
       ],
       useCase: { id: 'FOR-03', title: 'Mettre sa progression pédagogique au propre', libraryPage: 'p-sage' },
       prompt: 'Je te dicte ma progression pour enseigner le revers à une main : […]. Mets-la au propre en une fiche d’une page pour mes jeunes collègues.',
-      statsIntro: 'Votre expérience est une ressource précieuse pour le club : près d’un quart de la profession a 51 ans et plus.',
+      statsIntro: 'Ce profil se reconnaît à sa façon de s’appuyer sur l’expérience, quel que soit l’âge. Dans la profession, les plus expérimentés sont nombreux : près d’un quart a 51 ans et plus.',
       stats: [
         { value: '24 %', label: 'des personnes interrogées ont 51 ans et plus', source: NA_2024 },
         { label: 'Avec l’expérience, on apprend d’abord par la pratique, sur le terrain', source: 'Cortela et al., 2022 ; Anderson et al., 2021' }

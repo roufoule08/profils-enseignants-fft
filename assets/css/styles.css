@@ -14,9 +14,6 @@
   --color-line: #d8ddd8;
   --color-muted: #66736c;
   --color-track: #dce1dc;
-  --color-fam-court: #c75227;
-  --color-fam-club: #374bc4;
-  --color-fam-traj: #2f7d4f;
 
   --font-display: 'Barlow Condensed', 'Arial Narrow', Arial, sans-serif;
   --font-body: 'Roboto Flex', Arial, sans-serif;
@@ -173,23 +170,6 @@ img { max-width: 100%; }
 
 .grid { display: grid; gap: 13px; }
 
-/* Couleurs des familles : terre battue, surface dure, gazon (documentation de reprise). */
-.fam-court { --fam: var(--color-fam-court); }
-.fam-club { --fam: var(--color-fam-club); }
-.fam-traj { --fam: var(--color-fam-traj); }
-
-/* Étiquette de famille, dans la couleur de sa surface de court. */
-.family-tag {
-  display: inline-block;
-  padding: 4px 8px;
-  background: var(--fam, var(--color-orange));
-  color: #fff;
-  font-size: 11px;
-  font-weight: 900;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-}
-
 .story {
   position: relative;
   height: 450px;
@@ -334,8 +314,6 @@ img { max-width: 100%; }
 }
 .cover .deck { color: #fff; }
 
-.family-name { color: #fff; }
-
 .tag {
   display: inline-block;
   margin-right: 5px;
@@ -389,9 +367,6 @@ img { max-width: 100%; }
 }
 
 .prompt { font-weight: 700; color: var(--color-ball); font-size: 18px; }
-
-.use-case { margin: 0 0 8px; font-size: 14px; }
-.use-case strong { color: #fff; }
 
 .panel-note { font-size: 13px; opacity: .8; margin-bottom: 0; }
 
@@ -452,7 +427,6 @@ img { max-width: 100%; }
   color: var(--color-green);
 }
 .stat-quote .stat-label { font-style: italic; font-weight: 600; }
-.stat-source { font-size: 11px; color: var(--color-muted); }
 .stats-intro { font-weight: 600; margin-top: 0; }
 
 .text-link { color: inherit; font-weight: 700; text-underline-offset: 3px; }
@@ -461,10 +435,9 @@ img { max-width: 100%; }
 /* ---------- Sources et méthode ---------- */
 .methode h2 { font-size: 30px; color: var(--color-green); margin: 28px 0 10px; }
 .methode li { margin: 6px 0; }
-.table-scroll { overflow-x: auto; }
-.sources { width: 100%; border-collapse: collapse; font-size: 13px; }
-.sources th, .sources td { padding: 8px; border-bottom: 1px solid var(--color-line); text-align: left; vertical-align: top; }
-.sources thead th { background: var(--color-cream); }
+.methode h3 { font: 700 16px var(--font-body); text-transform: none; color: var(--color-ink); margin: 18px 0 6px; }
+.sources { padding-left: 18px; font-size: 14px; }
+.source-meta { color: var(--color-muted); }
 .methode .btn { margin-top: 20px; }
 
 /* ---------- La salle ---------- */
@@ -491,6 +464,7 @@ img { max-width: 100%; }
   font-size: 10px;
 }
 .footer p { margin: 0 0 8px; }
+.footer-version { opacity: .7; }
 .footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 16px; }
 .footer a { color: #fff; }
 

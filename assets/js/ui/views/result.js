@@ -1,4 +1,10 @@
-/** Portrait : le résultat détaillé, façon magazine. */
+/**
+ * Portrait : le résultat détaillé, façon magazine.
+ *
+ * Le questionnaire sert à capter l'attention en début d'atelier : le portrait
+ * se lit vite et ne disperse pas. Il ne contient que 2 liens (D-23) :
+ * la bibliothèque de prompts (cas d'usage) et la page « Sources et méthode ».
+ */
 (function (App) {
   'use strict';
 
@@ -17,8 +23,8 @@
 
   /**
    * Un indicateur v3 : nom, valeur (% ou libellé du palier pour « gain »),
-   * barre, puis « Libellé du palier. » en tête du texte, et le lien d'action
-   * du palier s'il en a un (référentiel, champ « affichage »).
+   * barre, puis « Libellé du palier. » en tête du texte (référentiel, champ
+   * « affichage »). Les liens d'action des paliers ne sont pas affichés (D-23).
    */
   function indicatorBlock(indicator, value) {
     var level = App.data.indicatorLevel(indicator, value);
@@ -30,9 +36,9 @@
         </div>
         <div class="track" aria-hidden="true"><i data-pct="${value}"></i></div>
         <p>${indicator.showPercent ? html`<strong>${level.libelle}.</strong> ` : ''}${level.texte}</p>
-        ${level.lien ? html`<a class="text-link" href="${level.lien}" target="_blank" rel="noopener">${level.action} →</a>` : ''}
       </div>`;
   }
+
   function pisteCard(piste, i) {
     return html`
       <li class="piste">
@@ -49,8 +55,16 @@
       <li class="stat${stat.value ? '' : ' stat-quote'}">
         ${stat.value ? html`<b class="stat-value">${stat.value}</b>` : ''}
         <span class="stat-label">${stat.label}</span>
-        <small class="stat-source">${stat.source}</small>
       </li>`;
+  }
+
+  /** Sources des chiffres du profil, réunies en une seule ligne et sans doublon. */
+  function statSources(stats) {
+    var unique = [];
+    stats.forEach(function (st) {
+      if (unique.indexOf(st.source) < 0) unique.push(st.source);
+    });
+    return unique.join(' ; ');
   }
 
   /**
@@ -62,7 +76,7 @@
     var base = App.data.links.promptLibrary;
     if (!base) return '';
     var url = profile.useCase ? base + '#' + profile.useCase.libraryPage : base;
-    return html`<a class="text-link" href="${url}" target="_blank" rel="noopener">Voir les cas d’usage pour mon profil →</a>`;
+    return html`<a class="text-link" href="${url}" target="_blank" rel="noopener">Voir d’autres prompts pour mon profil →</a>`;
   }
 
   /** @param {Object|null} result portrait enregistré (voir core/storage.js) */
@@ -74,7 +88,6 @@
 
     var ia = App.data.iaLevels[result.iaLevel];
     var name = App.data.profileName(p);
-    var family = App.data.families[p.family];
 
     return html`
       <section class="page">
@@ -82,7 +95,7 @@
           <div class="cover">
             <img class="cover-img" src="${p.image}" alt="Illustration du profil ${name}">
             <div class="cover-copy">
-              <div class="kicker">Votre portrait · <span class="family-name">${family.name}</span></div>
+              <div class="kicker">Votre portrait</div>
               <h1 tabindex="-1">${name}</h1>
               <p class="deck">«&nbsp;${p.quote}&nbsp;»</p>
               <span class="tag">IA : ${ia.name}</span>
@@ -114,7 +127,6 @@
 
               <section class="panel action">
                 <h2>Votre cas d’usage pour démarrer</h2>
-                ${p.useCase ? html`<p class="use-case">Cas d’usage ${p.useCase.id} de la bibliothèque : <strong>${p.useCase.title}</strong></p>` : ''}
                 <p class="prompt" id="prompt-text">${p.prompt}</p>
                 <button type="button" class="btn btn-light" data-action="copy-prompt">Copier le prompt</button>
                 <span class="copy-status" role="status" aria-live="polite"></span>
@@ -123,11 +135,11 @@
               </section>
 
               <section class="panel wide">
-                <h2>Pourquoi ce profil vous ressemble</h2>
+                <h2>Ce profil dans la profession</h2>
                 <p class="stats-intro">${p.statsIntro}</p>
                 <ul class="stats">${p.stats.map(statCard)}</ul>
-                <p class="panel-note">Ces chiffres décrivent la profession dans son ensemble, pas votre activité personnelle.
-                  <a class="text-link" href="#methode">Sources et méthode →</a></p>
+                <p class="panel-note">Ces chiffres décrivent la profession, pas votre parcours personnel.
+                  Sources : ${statSources(p.stats)}. <a class="text-link" href="#methode">Sources et méthode →</a></p>
               </section>
             </div>
 
