@@ -34,7 +34,7 @@
       id: 'passeur',
       family: 'court',
       names: { m: 'Le Pédagogue', f: 'La Pédagogue', both: 'Le ou la Pédagogue' },
-      player: 'Yannick Noah',
+      player: 'Aryna Sabalenka', // D-33 : parité 3 joueuses / 3 joueurs (remplace Yannick Noah)
       image: 'assets/img/profils/passeur.jpg',
       quote: 'Ma fierté, c’est de les voir progresser.',
       intro: 'Vous placez la progression des élèves et la relation pédagogique au cœur de votre métier.',
@@ -50,7 +50,7 @@
         },
         {
           title: 'Suivre la progression de chaque enfant',
-          text: 'Notez quelques mots après la séance : l’IA les transforme en suivi clair et lisible, prêt à partager avec l’enfant et sa famille.'
+          text: 'Notez quelques mots après la séance, sans nom ni information personnelle : l’IA les transforme en suivi clair et lisible, que vous complétez avant de le partager avec la famille.'
         }
       ],
       useCase: { id: 'SEA-01', title: 'Préparer une séance d’école de tennis', libraryPage: 'p-passeur' },
@@ -74,11 +74,11 @@
       pistes: [
         {
           title: 'Individualiser les plans d’entraînement',
-          text: 'À partir du profil d’un joueur ou d’une joueuse (niveau, objectifs, calendrier), l’IA propose une base de plan que vous ajustez avec votre expertise.'
+          text: 'À partir du profil d’un joueur ou d’une joueuse, sans le ou la nommer (niveau, objectifs, calendrier), l’IA propose une base de plan que vous ajustez avec votre expertise.'
         },
         {
           title: 'Tirer davantage de vos notes de match',
-          text: 'Collez vos observations ou vos statistiques : l’IA les organise et fait ressortir les axes de travail récurrents, en quelques secondes.'
+          text: 'Collez vos observations ou vos statistiques : l’IA les organise et fait ressortir les axes de travail récurrents.'
         },
         {
           title: 'Planifier la saison et la charge',
@@ -87,10 +87,10 @@
       ],
       useCase: { id: 'COM-01', title: 'Tirer 3 axes de travail d’un match', libraryPage: 'p-coach-de-competition' },
       prompt: 'Voici mes notes sur le dernier match de mon élève de 15 ans : […]. Identifie 3 axes de travail et propose un cycle de 4 semaines.',
-      statsIntro: 'La compétition occupe une grande partie de la profession, et les envies de formation de ce profil sont largement partagées.',
+      statsIntro: 'La compétition occupe une grande partie de la profession, et la préparation mentale arrive en tête des besoins de formation.',
       stats: [
         { value: '55 %', label: 'des personnes interrogées encadrent un centre d’entraînement jeunes', source: NA_2024 },
-        { value: '19,5 %', label: 'souhaitent se former à la préparation mentale, 16,6 % à la préparation physique', source: NA_2024 }
+        { value: '19,5 %', label: 'citent la préparation mentale comme besoin de formation, le premier de la liste, devant la préparation physique (16,6 %)', source: NA_2024 }
       ]
     },
     {
@@ -118,10 +118,10 @@
       ],
       useCase: { id: 'CLU-02', title: 'Rédiger la partie projet d’une demande de subvention', libraryPage: 'p-batisseur' },
       prompt: 'À partir de ces chiffres d’effectifs : […], rédige en une page la partie « projet sportif » du dossier de subvention municipale.',
-      statsIntro: 'Coordonner les projets et faire le lien avec la fédération sont des rôles reconnus et recherchés dans les clubs.',
+      statsIntro: 'Coordonner les projets et faire le lien avec la fédération sont des rôles bien identifiés dans les clubs.',
       stats: [
-        { value: '12 clubs', label: 'étudiés : coordonner les projets et faire le lien avec la fédération y sont des rôles clés', source: 'Rundstadler, 2025' },
-        { value: '9 %', label: 'des personnes interrogées sont titulaires du DESJEPS', source: NA_2024 }
+        { value: '12 clubs', label: 'étudiés, où les rôles de gestionnaire de projets et de relais fédéral ont été identifiés', source: 'Rundstadler, 2025' },
+        { value: '9 %', label: 'des personnes interrogées ont le DESJEPS, le diplôme d’État supérieur', source: NA_2024 }
       ]
     },
     {
@@ -140,7 +140,7 @@
         },
         {
           title: 'Simplifier les rappels et les relances',
-          text: 'Confirmations d’inscription, rappels de paiement, messages de rentrée : l’IA vous prépare des modèles réutilisables en quelques minutes.'
+          text: 'Confirmations d’inscription, rappels de paiement, messages de rentrée : l’IA vous prépare des modèles réutilisables.'
         },
         {
           title: 'Organiser votre planning sur plusieurs structures',
@@ -151,7 +151,7 @@
       prompt: 'Propose 3 stages de vacances pour adultes débutants, avec pour chacun un texte d’annonce court et un message à envoyer aux membres du club.',
       statsIntro: 'Travailler entre plusieurs structures, avec une part d’activité indépendante, est courant dans la profession.',
       stats: [
-        { value: '45 %', label: 'des personnes interrogées ont une part d’activité libérale', source: NA_2024 },
+        { value: '≈ 45 %', label: 'des personnes interrogées ont une part d’activité libérale', source: NA_2024 },
         { value: '26 %', label: 'travaillent dans plusieurs structures', source: NA_2024 },
         { value: '82 %', label: 'encadrent des adultes en tennis loisir', source: NA_2024 }
       ]

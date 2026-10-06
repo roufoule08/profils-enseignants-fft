@@ -6,10 +6,12 @@
 
   function profileCard(p) {
     var name = App.data.profileName(p);
+    var credit = App.data.photoCredit(p);
     return html`
       <article class="story">
         <img src="${p.image}" alt="Illustration du profil ${name}, esprit ${p.player}"
              loading="lazy" decoding="async">
+        ${credit ? html`<small class="photo-credit">© ${credit}</small>` : ''}
         <div class="story-copy">
           <h3>${name}</h3>
           <b>Esprit ${p.player}</b>
@@ -18,11 +20,18 @@
       </article>`;
   }
 
+  /** Crédit de la photo de fond (celle du profil passeur, voir styles.css « .hero »). */
+  function heroCredit() {
+    var credit = App.data.photoCredit(App.data.getProfile('passeur'));
+    return credit ? html`<small class="photo-credit">© ${credit}</small>` : '';
+  }
+
   App.views = App.views || {};
   App.views.home = function () {
     return html`
       <section>
         <div class="hero">
+          ${heroCredit()}
           <div class="hero-copy">
             <div class="kicker">Colloque des Enseignants</div>
             <h1 tabindex="-1">Quel profil <span>enseignant</span> êtes-vous ?</h1>

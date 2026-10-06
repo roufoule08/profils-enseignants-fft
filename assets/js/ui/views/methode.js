@@ -14,6 +14,23 @@
       <ul class="sources">${group.sources.map(sourceItem)}</ul>`;
   }
 
+  /** Crédits des photos renseignés (rien n'est affiché tant qu'aucun ne l'est). */
+  function photoCredits() {
+    var items = App.data.profiles
+      .filter(function (p) { return App.data.photoCredit(p); })
+      .map(function (p) {
+        var url = App.data.photoSource(p);
+        return html`<li>${p.player} : © ${App.data.photoCredit(p)}${url
+          ? html` · <a class="text-link" href="${url}" target="_blank" rel="noopener">voir la photo d’origine</a>`
+          : ''}</li>`;
+      });
+    if (!items.length) return '';
+    return html`
+      <h2>Crédits photos</h2>
+      <ul>${items}</ul>
+      <p class="panel-note">Les joueurs et joueuses cités illustrent des traits publics ; aucune citation ne leur est attribuée.</p>`;
+  }
+
   App.views = App.views || {};
   App.views.methode = function () {
     var m = App.data.methode;
@@ -32,6 +49,8 @@
 
           <h2>Les limites</h2>
           <ul>${m.limits.map(function (l) { return html`<li>${l}</li>`; })}</ul>
+
+          ${photoCredits()}
 
           <button type="button" class="btn" data-action="go" data-route="result">Revenir à mon portrait</button>
         </article>

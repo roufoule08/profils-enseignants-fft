@@ -1,5 +1,39 @@
 # Journal des modifications
 
+## Mise à jour 12 : liens vers les photos d'origine
+
+- Les 6 crédits « © FFT » renvoient à la photo d'origine dans la médiathèque FFT (page Sources et méthode). (D-30)
+- Numéro de version : 12. Contient aussi tout le contenu de la mise à jour 11.
+- 1 test a été ajouté, pour un total de 54.
+
+## Mise à jour 11 : parité femmes-hommes et sources des photos
+
+- **Aryna Sabalenka remplace Yannick Noah** (profil « Le ou la Pédagogue »), y compris en fond d'accueil.
+  Il y a maintenant 3 joueuses et 3 joueurs miroirs. (D-33)
+- **Sources des photos** : chaque crédit peut porter l'adresse de la photo d'origine dans la médiathèque FFT.
+  La page Sources et méthode affiche alors « voir la photo d'origine ». Les adresses sont à renseigner dans `assets/js/data/credits.js`. (D-30)
+- Numéro de version : 11.
+- 2 tests ont été ajoutés, pour un total de 53.
+
+## Mise à jour 10 : crédits photos FFT
+
+- « © FFT » s'affiche sur les 6 photos et sur la photo de fond de l'accueil. Une liste « Crédits photos » est ajoutée sur la page Sources et méthode.
+  Source : médiathèque de la FFT (media.fft.fr). Les noms des photographes pourront être ajoutés dans `assets/js/data/credits.js`. (D-30)
+- Numéro de version : 10.
+
+## Mise à jour 9 : bandeau du bas, crédits photos, pertinence des données
+
+- **Bandeau du bas** : les liens vers les mentions légales et la politique de confidentialité de fft.fr sont retirés,
+  car le site est hors environnement FFT. « Version 8 » est retiré aussi. Il reste le lien « Sources et méthode ». (D-28, D-29)
+- **Le numéro de version reste dans le code**, invisible, pour éviter les mélanges d'anciennes et de nouvelles versions.
+- **Crédits photos** : un crédit « © … » s'affiche sur chaque photo et dans « Sources et méthode » dès qu'il est renseigné
+  dans `assets/js/data/credits.js`. Les crédits restent à fournir, car les photos n'en contiennent aucun. (D-30)
+- **Pertinence des données** : chaque chiffre et chaque phrase du portrait a été relu par rapport au référentiel,
+  et 8 formulations qui allaient plus loin que les sources sont corrigées. Un test vérifie désormais
+  que chaque chiffre affiché figure dans le référentiel. (D-31)
+- **Données personnelles** : un rappel indique de ne jamais saisir de nom ni d'information personnelle sur les élèves dans l'IA. (D-32)
+- 3 tests ont été ajoutés, pour un total de 51.
+
 ## Mise à jour 8 : un portrait plus clair, plus court, toujours identique
 
 - **Test « mêmes réponses, même portrait »** :

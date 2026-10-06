@@ -200,6 +200,20 @@ img { max-width: 100%; }
   padding: 22px;
 }
 
+/* Crédit photo : discret, en haut à droite de la photo */
+.photo-credit {
+  position: absolute;
+  z-index: 3;
+  top: 0;
+  right: 0;
+  padding: 3px 6px;
+  background: #0009;
+  color: #fff;
+  font-size: 10px;
+}
+.cover-figure { position: relative; margin: 0; }
+.hero { position: relative; }
+
 .story h3 { font-size: 38px; line-height: .9; margin: 8px 0; }
 .story b { color: var(--color-ball); }
 /* ---------- Questionnaire ---------- */
@@ -464,7 +478,6 @@ img { max-width: 100%; }
   font-size: 10px;
 }
 .footer p { margin: 0 0 8px; }
-.footer-version { opacity: .7; }
 .footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 16px; }
 .footer a { color: #fff; }
 

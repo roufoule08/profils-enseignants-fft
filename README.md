@@ -65,6 +65,7 @@ tests/
 | Changer une question ou une réponse    | `assets/js/data/questions.js`  |
 | Changer les points d'une réponse       | `assets/js/data/questions.js` (champ `points`) |
 | Changer une photo                      | Remplacer le fichier dans `assets/img/profils/` (même nom, JPG de 1400 px maximum) |
+| Ajouter un crédit photo                | `assets/js/data/credits.js` |
 | Ajouter le lien de la bibliothèque     | `assets/js/data/links.js` (champ `promptLibrary`) |
 | Changer la page Sources et méthode     | `assets/js/data/methode.js` |
 | Changer un niveau IA                   | `assets/js/data/questions.js` (fin du fichier) |
@@ -82,8 +83,8 @@ Tout changement de texte ou de calcul par rapport au référentiel doit être aj
 
 ## Publier une nouvelle version
 
-Dans `index.html`, augmenter le numéro `?v=` de tous les fichiers (rechercher-remplacer, par exemple `?v=8` → `?v=9`)
-et le numéro « Version » du pied de page. Sans cela, certains téléphones peuvent garder une partie de
+Dans `index.html`, augmenter le numéro `?v=` de tous les fichiers (rechercher-remplacer, par exemple `?v=9` → `?v=10`)
+et la balise `<meta name="version">`. Sans cela, certains téléphones peuvent garder une partie de
 l'ancienne version en mémoire et afficher un portrait différent pour les mêmes réponses.
 
 ## Comment le portrait est calculé

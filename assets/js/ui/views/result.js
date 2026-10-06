@@ -93,7 +93,10 @@
       <section class="page">
         <article class="mag">
           <div class="cover">
-            <img class="cover-img" src="${p.image}" alt="Illustration du profil ${name}">
+            <figure class="cover-figure">
+              <img class="cover-img" src="${p.image}" alt="Illustration du profil ${name}">
+              ${App.data.photoCredit(p) ? html`<figcaption class="photo-credit">© ${App.data.photoCredit(p)}</figcaption>` : ''}
+            </figure>
             <div class="cover-copy">
               <div class="kicker">Votre portrait</div>
               <h1 tabindex="-1">${name}</h1>
@@ -122,7 +125,7 @@
               <section class="panel wide">
                 <h2>3 pistes où l’IA peut vous faciliter le travail</h2>
                 <ol class="pistes">${p.pistes.map(pisteCard)}</ol>
-                <p class="panel-note">L’IA prépare, vous décidez : votre expertise reste au centre.</p>
+                <p class="panel-note">L’IA prépare, vous décidez : votre expertise reste au centre. Ne saisissez jamais de nom ni d’information personnelle sur vos élèves.</p>
               </section>
 
               <section class="panel action">

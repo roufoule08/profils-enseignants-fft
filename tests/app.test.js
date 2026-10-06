@@ -462,6 +462,70 @@
     });
   });
 
+  test('Pertinence : chaque chiffre affiché figure dans les données d’ancrage du référentiel (D-31)', function () {
+    var ID_TO_CODE = {};
+    Object.keys(CODE_TO_ID).forEach(function (code) { ID_TO_CODE[CODE_TO_ID[code]] = code; });
+    App.data.profiles.forEach(function (p) {
+      var ancrage = REF.profils.find(function (rp) { return rp.code === ID_TO_CODE[p.id]; }).ancrage_donnees;
+      p.stats.forEach(function (st) {
+        var text = (st.value || '') + ' ' + st.label;
+        (text.match(/\d+(?:,\d+)?\s?(?:%|clubs)/g) || []).forEach(function (num) {
+          assert(ancrage.indexOf(num) >= 0, p.id + ' : « ' + num + ' » absent du référentiel (' + ancrage + ')');
+        });
+      });
+    });
+  });
+
+  test('Pertinence : rappel de ne jamais saisir de donnée personnelle sur les élèves (D-32)', function () {
+    var out = App.views.result(newRecord()).toString();
+    assert(out.indexOf('Ne saisissez jamais de nom ni d’information personnelle') >= 0);
+  });
+
+  test('Images : le crédit photo s’affiche dès qu’il est renseigné, et rien tant qu’il est vide (D-30)', function () {
+    var record = newRecord();
+    var original = App.data.photoCredit;
+    try {
+      App.data.photoCredit = function () { return null; };
+      assert(App.views.result(record).toString().indexOf('photo-credit') < 0, 'Rien sans crédit');
+      App.data.photoCredit = function () { return 'Prénom Nom / Agence'; };
+      assert(App.views.result(record).toString().indexOf('© Prénom Nom / Agence') >= 0, 'Portrait');
+      assert(App.views.home().toString().indexOf('© Prénom Nom / Agence') >= 0, 'Accueil');
+      assert(App.views.methode().toString().indexOf('Crédits photos') >= 0, 'Sources et méthode');
+    } finally {
+      App.data.photoCredit = original;
+    }
+    App.data.profiles.forEach(function (p) { assert(p.id in App.data.photoCredits, p.id + ' : entrée de crédit manquante'); });
+  });
+
+  test('Images : le lien vers la photo d’origine apparaît dans Sources et méthode quand il est renseigné', function () {
+    var original = App.data.photoSource;
+    try {
+      App.data.photoSource = function () { return 'https://media.fft.fr/exemple'; };
+      var out = App.views.methode().toString();
+      assert(out.indexOf('href="https://media.fft.fr/exemple"') >= 0, 'Lien vers la photo d’origine');
+    } finally {
+      App.data.photoSource = original;
+    }
+    assertEqual(App.data.photoSource({ id: 'inconnu' }), null);
+  });
+
+  test('Images : chaque photo a son crédit et son lien vers la médiathèque FFT (D-30)', function () {
+    var out = App.views.methode().toString();
+    App.data.profiles.forEach(function (p) {
+      var url = App.data.photoSource(p);
+      assert(App.data.photoCredit(p), p.player + ' : crédit manquant');
+      assert(url && url.indexOf('https://media.fft.fr/media/media-details/') === 0, p.player + ' : lien manquant ou invalide');
+      assert(out.indexOf('href="' + App.ui.escapeHtml(url) + '"') >= 0, p.player + ' : lien absent de Sources et méthode');
+    });
+  });
+
+  test('Parité : 3 joueuses et 3 joueurs miroirs (D-33)', function () {
+    var women = ['Aryna Sabalenka', 'Amélie Mauresmo', 'Serena Williams'];
+    var count = App.data.profiles.filter(function (p) { return women.indexOf(p.player) >= 0; }).length;
+    assertEqual(count, 3, 'Joueuses');
+    assertEqual(App.data.profiles.length - count, 3, 'Joueurs');
+  });
+
   test('Affichage : la bibliothèque de prompts est celle du référentiel', function () {
     var essai = REF.indicateurs.find(function (i) { return i.cle === 'essai'; });
     assertEqual(App.data.links.promptLibrary, essai.paliers[0].lien);
