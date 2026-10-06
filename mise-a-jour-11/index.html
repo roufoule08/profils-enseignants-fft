@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Colloque des Enseignants</title>
+  <meta name="description" content="Quel profil enseignant êtes-vous ? Un questionnaire ludique pour les enseignantes et enseignants de tennis.">
+  <!-- Pas de référencement tant que le site n'est pas validé (CLAUDE.md §6). -->
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#003c2e">
+  <!-- Numéro de version, invisible à l'écran. Le même que le ?v= des fichiers ci-dessous :
+       il permet de vérifier (clic droit > Afficher le code source) que deux personnes ont la même version. -->
+  <meta name="version" content="11">
+
+  <!-- Seul service tiers : Google Fonts. [À VALIDER : héberger les polices sur le site, voir DECISIONS.md] -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Roboto+Flex:wght@400;600;700&display=swap">
+  <link rel="stylesheet" href="assets/css/styles.css?v=11">
+</head>
+<body>
+  <a class="skip-link" href="#app">Aller au contenu</a>
+
+  <header class="top">
+    <nav class="nav" aria-label="Navigation principale">
+      <button type="button" data-nav="home">Accueil</button>
+      <button type="button" data-nav="quiz">Questionnaire</button>
+      <button type="button" data-nav="result">Portrait</button>
+      <button type="button" data-nav="room">Salle</button>
+    </nav>
+  </header>
+
+  <main id="app" tabindex="-1">
+    <noscript><p class="noscript">Ce site nécessite JavaScript pour fonctionner.</p></noscript>
+  </main>
+
+  <footer class="footer">
+    <p>Outil ludique d’animation, appuyé sur des études : ce n’est ni un test psychométrique ni une évaluation professionnelle.<br>
+    Les joueurs et joueuses cités illustrent des traits publics ; aucune citation ne leur est attribuée.</p>
+    <p class="footer-links"><a href="#methode">Sources et méthode</a></p>
+
+  </footer>
+
+  <!-- L'ordre compte : données, puis outils, puis pages, puis l'application.
+       ?v=11 : numéro de la mise à jour. À augmenter à chaque publication, avec la
+       balise meta « version », pour que les navigateurs rechargent tous les fichiers
+       (sinon un téléphone peut mélanger ancienne et nouvelle version). -->
+  <script src="assets/js/data/referentiel.js?v=11" defer></script>
+  <script src="assets/js/data/profiles.js?v=11" defer></script>
+  <script src="assets/js/data/questions.js?v=11" defer></script>
+  <script src="assets/js/data/indicators.js?v=11" defer></script>
+  <script src="assets/js/data/links.js?v=11" defer></script>
+  <script src="assets/js/data/credits.js?v=11" defer></script>
+  <script src="assets/js/data/methode.js?v=11" defer></script>
+  <script src="assets/js/ui/html.js?v=11" defer></script>
+  <script src="assets/js/core/scoring.js?v=11" defer></script>
+  <script src="assets/js/core/storage.js?v=11" defer></script>
+  <script src="assets/js/core/router.js?v=11" defer></script>
+  <script src="assets/js/ui/views/home.js?v=11" defer></script>
+  <script src="assets/js/ui/views/quiz.js?v=11" defer></script>
+  <script src="assets/js/ui/views/result.js?v=11" defer></script>
+  <script src="assets/js/ui/views/room.js?v=11" defer></script>
+  <script src="assets/js/ui/views/methode.js?v=11" defer></script>
+  <script src="assets/js/app.js?v=11" defer></script>
+</body>
+</html>

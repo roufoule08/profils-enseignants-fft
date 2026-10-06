@@ -1,0 +1,246 @@
+/**
+ * Les six profils.
+ *
+ * L'ordre de ce tableau est l'ordre d'affichage (accueil, salle) et sert
+ * aussi de dernier critère pour départager deux profils à égalité.
+ *
+ * Ton à respecter dans tous les textes : valorisant, jamais critique.
+ * L'IA est présentée comme une aide qui fait gagner du temps, pas comme
+ * un remplacement du savoir-faire de l'enseignant ou de l'enseignante.
+ *
+ * Champs :
+ *   family    : famille du profil (voir App.data.families)
+ *   image     : photo du joueur ou de la joueuse miroir [À VALIDER : droits à l'image, voir DECISIONS.md D-10]
+ *   names     : nom du profil au masculin (m), au féminin (f) et sous les deux formes (both)
+ *   strengths : 3 points forts
+ *   pistes    : 3 pistes concrètes où l'IA facilite le travail { title, text }
+ *   useCase   : cas d'usage de la bibliothèque de prompts qui correspond au prompt
+ *               { id, title, libraryPage : ancre de la page du profil dans la bibliothèque }
+ *               (relevé dans la bibliothèque le 5 octobre 2026, DECISIONS.md D-22)
+ *   prompt    : consigne prête à copier pour un premier essai
+ *   statsIntro: phrase qui situe le profil dans la profession. Elle parle du profil,
+ *               jamais de la personne (qui peut avoir ce profil à tout âge, D-25)
+ *   stats     : repères chiffrés issus des études { value, label, source }
+ */
+(function (App) {
+  'use strict';
+
+  App.data = App.data || {};
+
+  var NA_2024 = 'Enquête métier, Ligue de Nouvelle-Aquitaine de tennis, 2024 (729 éducateurs)';
+
+  App.data.profiles = Object.freeze([
+    {
+      id: 'passeur',
+      family: 'court',
+      names: { m: 'Le Pédagogue', f: 'La Pédagogue', both: 'Le ou la Pédagogue' },
+      player: 'Aryna Sabalenka', // D-33 : parité 3 joueuses / 3 joueurs (remplace Yannick Noah)
+      image: 'assets/img/profils/passeur.jpg',
+      quote: 'Ma fierté, c’est de les voir progresser.',
+      intro: 'Vous placez la progression des élèves et la relation pédagogique au cœur de votre métier.',
+      strengths: ['Pédagogie et patience', 'Sens du jeu et de l’animation', 'Lien de confiance avec les familles'],
+      pistes: [
+        {
+          title: 'Adapter une séance à chaque niveau',
+          text: 'Décrivez votre groupe (âge, niveau, objectif) : l’IA vous propose une trame et des variantes adaptées à chaque niveau du groupe. Vous gardez la main sur le choix final.'
+        },
+        {
+          title: 'Gagner du temps avec les familles',
+          text: 'Messages d’information, réponses aux questions fréquentes, bilans de trimestre : l’IA prépare un premier jet, vous le relisez et y ajoutez votre regard.'
+        },
+        {
+          title: 'Suivre la progression de chaque enfant',
+          text: 'Notez quelques mots après la séance, sans nom ni information personnelle : l’IA les transforme en suivi clair et lisible, que vous complétez avant de le partager avec la famille.'
+        }
+      ],
+      useCase: { id: 'SEA-01', title: 'Préparer une séance d’école de tennis', libraryPage: 'p-passeur' },
+      prompt: 'Prépare une séance d’une heure pour 8 enfants de 7-8 ans, niveau orange, objectif : le service. Propose 3 exercices ludiques et une variante pour les plus avancés.',
+      statsIntro: 'Ce profil est au cœur du métier : faire progresser les plus jeunes fait partie du quotidien de la grande majorité de la profession.',
+      stats: [
+        { value: '87 %', label: 'des personnes interrogées encadrent l’école de tennis', source: NA_2024 },
+        { value: '68 %', label: 'encadrent le mini-tennis', source: NA_2024 },
+        { label: 'La transmission est décrite comme « la plus belle satisfaction » du métier', source: 'Rundstadler, 2025 (environ 40 entretiens, 12 clubs)' }
+      ]
+    },
+    {
+      id: 'coach',
+      family: 'court',
+      names: { m: 'Le Coach de compétition', f: 'La Coach de compétition', both: 'Le ou la Coach de compétition' },
+      player: 'Novak Djokovic',
+      image: 'assets/img/profils/coach.jpg',
+      quote: 'Sur le court, c’est le résultat qui parle.',
+      intro: 'Vous aimez transformer l’observation en progression mesurable, avec des repères précis.',
+      strengths: ['Expertise technique et tactique', 'Exigence et sens de la performance', 'Crédibilité sportive'],
+      pistes: [
+        {
+          title: 'Individualiser les plans d’entraînement',
+          text: 'À partir du profil d’un joueur ou d’une joueuse, sans le ou la nommer (niveau, objectifs, calendrier), l’IA propose une base de plan que vous ajustez avec votre expertise.'
+        },
+        {
+          title: 'Tirer davantage de vos notes de match',
+          text: 'Collez vos observations ou vos statistiques : l’IA les organise et fait ressortir les axes de travail récurrents.'
+        },
+        {
+          title: 'Planifier la saison et la charge',
+          text: 'Tournois, périodes de travail, récupération : l’IA vous aide à bâtir un calendrier cohérent et à le réajuster quand le programme change.'
+        }
+      ],
+      useCase: { id: 'COM-01', title: 'Tirer 3 axes de travail d’un match', libraryPage: 'p-coach-de-competition' },
+      prompt: 'Voici mes notes sur le dernier match de mon élève de 15 ans : […]. Identifie 3 axes de travail et propose un cycle de 4 semaines.',
+      statsIntro: 'La compétition occupe une grande partie de la profession, et la préparation mentale arrive en tête des besoins de formation.',
+      stats: [
+        { value: '55 %', label: 'des personnes interrogées encadrent un centre d’entraînement jeunes', source: NA_2024 },
+        { value: '19,5 %', label: 'citent la préparation mentale comme besoin de formation, le premier de la liste, devant la préparation physique (16,6 %)', source: NA_2024 }
+      ]
+    },
+    {
+      id: 'batisseur',
+      family: 'club',
+      names: { m: 'Le Bâtisseur', f: 'La Bâtisseuse', both: 'Le Bâtisseur · La Bâtisseuse' },
+      player: 'Amélie Mauresmo',
+      image: 'assets/img/profils/batisseur.jpg',
+      quote: 'Je fais tourner le club.',
+      intro: 'Vous reliez le terrain, l’équipe et le projet de club pour faire avancer le collectif.',
+      strengths: ['Vision d’ensemble', 'Organisation et coordination d’équipe', 'Relais entre bénévoles, fédération et collectivité'],
+      pistes: [
+        {
+          title: 'Alléger les dossiers de subvention',
+          text: 'Donnez vos chiffres et vos objectifs : l’IA rédige une première version du projet sportif, que vous complétez avec votre connaissance du club.'
+        },
+        {
+          title: 'Garder une trace claire des réunions',
+          text: 'Dictez ou collez vos notes : l’IA en fait un compte rendu structuré, avec les décisions et la liste des actions à suivre.'
+        },
+        {
+          title: 'Piloter avec des outils simples',
+          text: 'Plannings des courts, répartition des groupes, tableau de bord mensuel : l’IA vous aide à les construire et à les mettre à jour plus vite.'
+        }
+      ],
+      useCase: { id: 'CLU-02', title: 'Rédiger la partie projet d’une demande de subvention', libraryPage: 'p-batisseur' },
+      prompt: 'À partir de ces chiffres d’effectifs : […], rédige en une page la partie « projet sportif » du dossier de subvention municipale.',
+      statsIntro: 'Coordonner les projets et faire le lien avec la fédération sont des rôles bien identifiés dans les clubs.',
+      stats: [
+        { value: '12 clubs', label: 'étudiés, où les rôles de gestionnaire de projets et de relais fédéral ont été identifiés', source: 'Rundstadler, 2025' },
+        { value: '9 %', label: 'des personnes interrogées ont le DESJEPS, le diplôme d’État supérieur', source: NA_2024 }
+      ]
+    },
+    {
+      id: 'entrepreneur',
+      family: 'club',
+      names: { m: 'L’Entrepreneur', f: 'L’Entrepreneuse', both: 'L’Entrepreneur · L’Entrepreneuse' },
+      player: 'Serena Williams',
+      image: 'assets/img/profils/entrepreneur.jpg',
+      quote: 'Chaque créneau compte.',
+      intro: 'Vous construisez des cours et des stages qui répondent aux attentes de vos élèves.',
+      strengths: ['Sens du service', 'Autonomie', 'Capacité à proposer de nouveaux cours et stages'],
+      pistes: [
+        {
+          title: 'Faire connaître vos stages et vos cours',
+          text: 'Décrivez votre stage : l’IA rédige l’annonce pour le site du club, les réseaux sociaux ou un message aux familles, dans le ton que vous choisissez.'
+        },
+        {
+          title: 'Simplifier les rappels et les relances',
+          text: 'Confirmations d’inscription, rappels de paiement, messages de rentrée : l’IA vous prépare des modèles réutilisables.'
+        },
+        {
+          title: 'Organiser votre planning sur plusieurs structures',
+          text: 'Listez vos créneaux et vos contraintes : l’IA vous aide à comparer plusieurs organisations possibles de votre semaine.'
+        }
+      ],
+      useCase: { id: 'OFF-01', title: 'Créer une offre de stage de vacances', libraryPage: 'p-entrepreneur' },
+      prompt: 'Propose 3 stages de vacances pour adultes débutants, avec pour chacun un texte d’annonce court et un message à envoyer aux membres du club.',
+      statsIntro: 'Travailler entre plusieurs structures, avec une part d’activité indépendante, est courant dans la profession.',
+      stats: [
+        { value: '≈ 45 %', label: 'des personnes interrogées ont une part d’activité libérale', source: NA_2024 },
+        { value: '26 %', label: 'travaillent dans plusieurs structures', source: NA_2024 },
+        { value: '82 %', label: 'encadrent des adultes en tennis loisir', source: NA_2024 }
+      ]
+    },
+    {
+      id: 'jeune-pro',
+      family: 'traj',
+      names: { m: 'Le Jeune Pro', f: 'La Jeune Pro', both: 'Le ou la Jeune Pro' },
+      player: 'Carlos Alcaraz',
+      image: 'assets/img/profils/jeune-pro.jpg',
+      quote: 'J’apprends tous les jours.',
+      intro: 'Vous progressez par l’essai, l’observation et la recherche de nouvelles méthodes.',
+      strengths: ['Énergie et curiosité', 'Aisance avec le numérique', 'Envie de se former'],
+      pistes: [
+        {
+          title: 'Réviser et préparer vos examens',
+          text: 'L’IA peut vous interroger sur le programme de votre diplôme, vous expliquer une notion autrement ou corriger un écrit d’entraînement.'
+        },
+        {
+          title: 'Construire votre banque d’exercices',
+          text: 'Pour chaque objectif (service, déplacement, jeu au filet), l’IA vous propose des exercices commentés que vous testez et classez au fil des séances.'
+        },
+        {
+          title: 'Vous préparer aux situations délicates',
+          text: 'Entraînez-vous à répondre à un parent mécontent ou à gérer un groupe agité : l’IA joue le rôle, vous testez vos réponses en toute tranquillité.'
+        }
+      ],
+      useCase: { id: 'FOR-02', title: 'S’entraîner à une situation difficile', libraryPage: 'p-jeune-pro' },
+      prompt: 'Joue le rôle d’un parent mécontent que son enfant ne passe pas en groupe compétition. Je m’entraîne à lui répondre.',
+      statsIntro: 'Ce profil se reconnaît à sa façon d’apprendre en continu, quel que soit l’âge. Dans la profession, c’est aussi une génération nombreuse qui se forme activement.',
+      stats: [
+        { value: '30 %', label: 'des personnes interrogées ont entre 18 et 30 ans', source: NA_2024 },
+        { value: '69 %', label: 'des 18-30 ans ont un projet de formation diplômante', source: NA_2024 }
+      ]
+    },
+    {
+      id: 'sage',
+      family: 'traj',
+      names: { m: 'Le Sage', f: 'La Sage', both: 'Le ou la Sage' },
+      player: 'Roger Federer',
+      image: 'assets/img/profils/sage.jpg',
+      quote: 'J’ai tout vu passer. Montrez-moi que ça marche.',
+      intro: 'Vous vous appuyez sur l’expérience et retenez les nouveautés qui apportent une vraie valeur.',
+      strengths: ['Expérience et recul', 'Fidélité des membres du club', 'Transmission aux jeunes collègues'],
+      pistes: [
+        {
+          title: 'Mettre votre savoir-faire au propre',
+          text: 'Vos progressions et vos méthodes qui ont fait leurs preuves : l’IA vous aide à les mettre en forme en fiches claires.'
+        },
+        {
+          title: 'Parler au lieu d’écrire',
+          text: 'Pas besoin de tout réapprendre : vous dictez à voix haute, l’IA rédige le texte. Idéal pour la paperasse et les comptes rendus.'
+        },
+        {
+          title: 'Transmettre à l’équipe',
+          text: 'Transformez vos méthodes en supports simples pour vos collègues : fiches de séance, conseils, repères de progression.'
+        }
+      ],
+      useCase: { id: 'FOR-03', title: 'Mettre sa progression pédagogique au propre', libraryPage: 'p-sage' },
+      prompt: 'Je te dicte ma progression pour enseigner le revers à une main : […]. Mets-la au propre en une fiche d’une page pour mes jeunes collègues.',
+      statsIntro: 'Ce profil se reconnaît à sa façon de s’appuyer sur l’expérience, quel que soit l’âge. Dans la profession, les plus expérimentés sont nombreux : près d’un quart a 51 ans et plus.',
+      stats: [
+        { value: '24 %', label: 'des personnes interrogées ont 51 ans et plus', source: NA_2024 },
+        { label: 'Avec l’expérience, on apprend d’abord par la pratique, sur le terrain', source: 'Cortela et al., 2022 ; Anderson et al., 2021' }
+      ]
+    }
+  ]);
+
+  /** Retourne le profil correspondant à `id`, ou `undefined`. */
+  App.data.getProfile = function (id) {
+    return App.data.profiles.find(function (p) { return p.id === id; });
+  };
+
+  /**
+   * Les 3 familles de profils (documentation de reprise, « Les 3 familles »).
+   * La couleur reprend la surface de court associée à chaque famille.
+   */
+  App.data.families = Object.freeze({
+    court: { name: 'Sur le court', surface: 'Terre battue' },
+    club: { name: 'Autour du court', surface: 'Surface dure' },
+    traj: { name: 'Trajectoires', surface: 'Gazon' }
+  });
+
+  /**
+   * Nom affiché du profil : toujours les deux formes (« Le Passeur · La Passeuse »),
+   * pour que chacune et chacun s'y reconnaisse sans qu'on demande le genre
+   * (aucune donnée nouvelle : voir DECISIONS.md, D-09).
+   */
+  App.data.profileName = function (profile) {
+    return profile.names.both;
+  };
+})(window.App = window.App || {});
